@@ -26,9 +26,16 @@ app.get('/', (req, res) => {
 });
 
 app.get('/redirect', (req, res) => {
-    const parseFragment = '<script>console.log(window.location.hash)</script>';
-    console.log(req.originalUrl);
-    res.send('acknowledged' + parseFragment);
+    const parseFragmentScript = '<script>fetch("/store-user-token", {headers:{"Content-Type":"application/json"},method:"POST",body:JSON.stringify({token:window.location.hash})});console.log(window.location.hash);</script>';
+    res.send('acknowledged' + parseFragmentScript);
+    res.end();
+});
+
+app.post('/store-user-token', (req, res) => {
+    console.log(req.body.token);
+
+    // todo - store token
+
     res.end();
 });
 
