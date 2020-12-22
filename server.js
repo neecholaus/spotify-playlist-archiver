@@ -2,6 +2,12 @@ const express = require('express');
 
 const app = express();
 
+// env variables
+require('dotenv').config();
+
+// pull client id from env
+const clientID = process.env.SPOTIFY_CLIENT_ID;
+
 // json payloads
 app.use(express.json());
 
@@ -9,7 +15,7 @@ app.get('/', (req, res) => {
     let spotifyUrl = 'https://accounts.spotify.com/authorize';
 
     // client id
-    spotifyUrl += '?client_id=fd5307aee53c4b16a676f2ca349e1323';
+    spotifyUrl += `?client_id=${clientID}`;
 
     spotifyUrl += '&response_type=token';
 
