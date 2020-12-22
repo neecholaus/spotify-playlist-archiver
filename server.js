@@ -1,6 +1,7 @@
-const express = require('express');
-
-const app = express();
+const
+    express = require('express'),
+    fs = require('fs'),
+    app = express();
 
 // env variables
 require('dotenv').config();
@@ -11,6 +12,9 @@ const clientID = process.env.SPOTIFY_CLIENT_ID;
 // json payloads
 app.use(express.json());
 
+/**
+ * Entrypoint to spotify account access granting.
+ */
 app.get('/', (req, res) => {
     let spotifyUrl = 'https://accounts.spotify.com/authorize';
 
@@ -25,18 +29,32 @@ app.get('/', (req, res) => {
     res.end();
 });
 
+/**
+ * Handles the redirection after signing into spotify.
+ */
 app.get('/redirect', (req, res) => {
     const parseFragmentScript = '<script>fetch("/store-user-token", {headers:{"Content-Type":"application/json"},method:"POST",body:JSON.stringify({token:window.location.hash})});console.log(window.location.hash);</script>';
     res.send('acknowledged' + parseFragmentScript);
     res.end();
 });
 
+/**
+ * Accepts token field, parses and then stores in a file.
+ */
 app.post('/store-user-token', (req, res) => {
-    console.log(req.body.token);
+    let vals = req.body.token.replace('#', '').split(/[?&]/);
 
-    // todo - store token
+    // map values into an object for easy access
+    let mappedVals = {};
+    vals.map(val => {
+        const [key, value] = val.split('=');
+        mappedVals[key] = value;
+    });
 
-    res.end();
+    // write values to a file
+    fs.writeFileSync('account_access.txt', JSON.stringify(mappedVals));
+
+    res.sendStatus(200).end();
 });
 
 console.log('server starting');
