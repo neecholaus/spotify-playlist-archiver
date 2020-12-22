@@ -52,7 +52,7 @@ app.post('/store-user-token', (req, res) => {
     });
 
     // write values to a file
-    fs.writeFileSync('account_access.txt', JSON.stringify(mappedVals));
+    fs.writeFileSync('account_access.json', JSON.stringify(mappedVals));
 
     res.sendStatus(200).end();
 });
