@@ -23,7 +23,7 @@ app.get('/', (req, res) => {
 
     spotifyUrl += '&response_type=token';
 
-    spotifyUrl += '&redirect_uri=http://localhost:3000/redirect';
+    spotifyUrl += '&redirect_uri=http://localhost/redirect';
 
     res.send(`<a href="${spotifyUrl}">authenticate with spotify</a>`);
     res.end();
@@ -57,5 +57,4 @@ app.post('/store-user-token', (req, res) => {
     res.sendStatus(200).end();
 });
 
-console.log('server starting');
-app.listen(3000);
+app.listen(80);
