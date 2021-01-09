@@ -22,7 +22,5 @@ const authorizationFilePath = './account_access.json';
     // create instance of driver
     const SpotifyDriver = new (require('./SpotifyDriver'))(authorizationFragment);
 
-    const userInfo = await SpotifyDriver.getUser();
-
-    console.log(userInfo);
+    console.log(await SpotifyDriver.getPlaylists());
 })();

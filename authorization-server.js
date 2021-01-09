@@ -23,7 +23,7 @@ app.get('/', (req, res) => {
 
     spotifyUrl += '&response_type=token';
 
-    spotifyUrl += '&scope=' + encodeURIComponent('user-read-email user-read-private');
+    spotifyUrl += '&scope=' + encodeURIComponent('user-read-email user-read-private playlist-read-private playlist-read-collaborative');
 
     spotifyUrl += '&redirect_uri=http://localhost/redirect';
 

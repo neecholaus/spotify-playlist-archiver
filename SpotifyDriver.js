@@ -15,11 +15,14 @@ class SpotifyDriver {
         this.acctAccess = acctAccess;
     }
 
-    /** @return object|null */
+    /** 
+     * Get all info relating to the user's profile.
+     * @return object|null 
+     */
     async getUser() {
         return await fetch(this.baseEndpoint + '/me', {
             headers: {
-                'Authorization': 'Bearer ' + this.acctAccess.access_token
+                Authorization: 'Bearer ' + this.acctAccess.access_token
             }
         })
             .then(res => {
@@ -27,6 +30,25 @@ class SpotifyDriver {
                     throw new Error('Response was not 200');
 
                 return res.json()
+            })
+            .catch(() => null);
+    }
+
+    /** 
+     * Returns a list of the user's playlists.
+     * @return object|null 
+     */
+    async getPlaylists() {
+        return await fetch(this.baseEndpoint + '/me/playlists', {
+            headers: {
+                Authorization: 'Bearer ' + this.acctAccess.access_token
+            }
+        })
+            .then(res => {
+                if (res.status !== 200)
+                    throw new Error('Response was not 200');
+
+                return res.json();
             })
             .catch(() => null);
     }
