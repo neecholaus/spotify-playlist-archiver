@@ -1,6 +1,6 @@
 const fetch = require('node-fetch');
 
-class Spotify {
+class SpotifyDriver {
     /** @var object */
     acctAccess;
 
@@ -16,20 +16,20 @@ class Spotify {
     }
 
     async getUser() {
-        console.log(this.acctAccess);
         return await fetch(this.baseEndpoint + '/me', {
             headers: {
                 'Authorization': 'Bearer ' + this.acctAccess.access_token
             }
         })
-            .then(res => res.json())
             .then(res => {
-                console.log(res);
+                if (res.status !== 200)
+                    throw new Error('Response was not 200');
+
+                return res.json()
             })
-            .catch(err => {
-                console.log(err);
-            });
+            .then(res => res)
+            .catch(() => null);
     }
 }
 
-module.exports = Spotify;
+module.exports = SpotifyDriver;
