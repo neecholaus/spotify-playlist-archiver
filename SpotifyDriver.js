@@ -15,6 +15,7 @@ class SpotifyDriver {
         this.acctAccess = acctAccess;
     }
 
+    /** @return object|null */
     async getUser() {
         return await fetch(this.baseEndpoint + '/me', {
             headers: {
@@ -27,7 +28,6 @@ class SpotifyDriver {
 
                 return res.json()
             })
-            .then(res => res)
             .catch(() => null);
     }
 }
