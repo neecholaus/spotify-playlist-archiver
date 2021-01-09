@@ -23,6 +23,8 @@ app.get('/', (req, res) => {
 
     spotifyUrl += '&response_type=token';
 
+    spotifyUrl += '&scope=' + encodeURIComponent('user-read-email user-read-private');
+
     spotifyUrl += '&redirect_uri=http://localhost/redirect';
 
     res.send(`<a href="${spotifyUrl}">authenticate with spotify</a>`);
