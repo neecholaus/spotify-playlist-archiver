@@ -53,10 +53,10 @@ app.post('/store-user-token', (req, res) => {
         mappedVals[key] = value;
     });
 
-    // show user when their auth ends
+    // estimate token expiration
     let time = new Date();
     time.setTime(time.getTime() + parseInt(mappedVals.expires_in));
-    console.log('Your token expires at - ' + time);
+    mappedVals.approximate_token_expiration = time;
 
     // write values to a file
     fs.writeFileSync('account_access.json', JSON.stringify(mappedVals));

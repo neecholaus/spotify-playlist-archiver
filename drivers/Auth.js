@@ -1,11 +1,15 @@
 const fs = require('fs');
 
 class Auth {
-    static getAccessToken() {
+    /** 
+     * @throws Error
+     * @returns object|void */
+    static getAccountAccess() {
         return this._readAndParseAccountAccess();
     }
 
     /**
+     * @throws Errora
      * @returns object|void
      */
     static _readAndParseAccountAccess() {

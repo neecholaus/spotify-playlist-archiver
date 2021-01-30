@@ -1,6 +1,6 @@
 const fetch = require('node-fetch');
 
-class SpotifyDriver {
+class Spotify {
     /** @var object */
     acctAccess;
 
@@ -54,4 +54,4 @@ class SpotifyDriver {
     }
 }
 
-module.exports = SpotifyDriver;
+module.exports = Spotify;
