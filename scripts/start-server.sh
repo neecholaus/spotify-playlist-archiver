@@ -7,4 +7,4 @@ echo 'Server is starting...'
 
 node authorization-server.js
 
-echo 'You have been authenticated.'
+echo 'You are now authenticated.'
