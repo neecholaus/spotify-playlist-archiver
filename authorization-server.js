@@ -57,6 +57,9 @@ app.post('/store-user-token', (req, res) => {
     fs.writeFileSync('account_access.json', JSON.stringify(mappedVals));
 
     res.sendStatus(200).end();
+
+    // server is no longer needed
+    process.kill(process.pid);
 });
 
 app.listen(80);
