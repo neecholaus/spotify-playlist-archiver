@@ -2,24 +2,26 @@ console.log('== Spotify Playlist Archiver ==');
 
 const exec = require('child_process');
 const fs = require('fs');
+const {log} = require('./drivers/log');
 const auth = require('./drivers/Auth');
 
-console.log('[auth] attempting to pull existing access token');
+log('attempting to pull existing access token', 'auth');
+
 try {
     const accessToken = auth.getAccessToken();
-    console.log('[auth] token was found')
+    log('token was found', 'auth');
 } catch (e) {
-    console.log('[auth] token could not be accessed');
+    log('token could not be accessed', 'auth');
     const mustRunThroughAuth = true;
 }
 
 if (typeof mustRunThroughAuth !== 'undefined') {
-    console.log('[auth] starting auth server');
+    log('starting auth server', 'autha');
 
     // start server
 
     // open browser
 }
 
-console.log('[auth] attempting to pull account info');
+log('attempting to pull account info', 'auth');
 
