@@ -6,9 +6,6 @@ const
 // env variables
 require('dotenv').config();
 
-// pull client id from env
-const clientID = process.env.SPOTIFY_CLIENT_ID;
-
 // json payloads
 app.use(express.json());
 
@@ -16,18 +13,20 @@ app.use(express.json());
  * Entrypoint to spotify account access granting.
  */
 app.get('/', (req, res) => {
-    let spotifyUrl = 'https://accounts.spotify.com/authorize';
+    // pull client id from env
+    const clientID = process.env.SPOTIFY_CLIENT_ID;
 
-    // client id
-    spotifyUrl += `?client_id=${clientID}`;
+    const scopes = 'user-read-email user-read-private playlist-read-private playlist-read-collaborative';
 
-    spotifyUrl += '&response_type=token';
+    let spotifyUrl = [
+        'https://accounts.spotify.com/authorize',
+        `?client_id=${clientID}`,
+        '&response_type=token',
+        '&scope=' + encodeURIComponent(scopes),
+        '&redirect_uri=http://localhost/redirect'
+    ].join('');
 
-    spotifyUrl += '&scope=' + encodeURIComponent('user-read-email user-read-private playlist-read-private playlist-read-collaborative');
-
-    spotifyUrl += '&redirect_uri=http://localhost/redirect';
-
-    res.send(`<a href="${spotifyUrl}">authenticate with spotify</a>`);
+    res.send(`<script>window.location="${spotifyUrl}"</script>`);
     res.end();
 });
 

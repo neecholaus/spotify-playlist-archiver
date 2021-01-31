@@ -18,7 +18,7 @@ class Auth {
             let mustRunThroughAuth = false;
 
             try {
-                accountAccess = this.getAccountAccess();
+                accountAccess = this._readAndParseAccountAccess();
                 log('token was found', 'auth');
             } catch (e) {
                 log('token could not be accessed', 'auth');
@@ -33,6 +33,8 @@ class Auth {
                 }
 
                 log('starting auth server', 'auth');
+
+                log('navigate here: http://localhost');
 
                 // start server
                 child.execFileSync(path.resolve(__dirname, '../scripts/start-server.sh'));
@@ -63,13 +65,6 @@ class Auth {
 
             // todo - call next step in app?
         }
-    }
-
-    /** 
-     * @throws Error
-     * @returns object|void */
-    static getAccountAccess() {
-        return this._readAndParseAccountAccess();
     }
 
     /**
