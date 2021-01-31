@@ -16,5 +16,5 @@ if (redirectParams.has('error')) {
 }
 
 function buildHeader(text) {
-    return `<h1 style="text-align:center;font-weight:bolder">${text}</h1>`;
+    return `<h1 style="text-align:center;font-weight:bolder;font-family:Ariel,sans-serif">${text}</h1>`;
 };

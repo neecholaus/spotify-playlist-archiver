@@ -63,7 +63,7 @@ app.post('/store-user-token', (req, res) => {
     res.sendStatus(200).end();
 
     // server is no longer needed
-    // process.exit();
+    process.exit();
 });
 
 app.listen(80);
