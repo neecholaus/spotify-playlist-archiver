@@ -1,7 +1,8 @@
 const
     express = require('express'),
     fs = require('fs'),
-    app = express();
+    app = express(),
+    path = require('path');
 
 // env variables
 require('dotenv').config();
@@ -34,8 +35,7 @@ app.get('/', (req, res) => {
  * Handles the redirection after signing into spotify.
  */
 app.get('/redirect', (req, res) => {
-    const parseFragmentScript = '<script>fetch("/store-user-token", {headers:{"Content-Type":"application/json"},method:"POST",body:JSON.stringify({token:window.location.hash})});console.log(window.location.hash);</script>';
-    res.send('acknowledged' + parseFragmentScript);
+    res.send('<script>' + fs.readFileSync(path.resolve(__dirname, './web/parse-auth-fragment.js')) + '</script>');
     res.end();
 });
 
