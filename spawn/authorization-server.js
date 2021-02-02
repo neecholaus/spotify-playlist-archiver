@@ -35,7 +35,7 @@ app.get('/', (req, res) => {
  * Handles the redirection after signing into spotify.
  */
 app.get('/redirect', (req, res) => {
-    res.send('<script>' + fs.readFileSync(path.resolve(__dirname, './web/parse-auth-fragment.js')) + '</script>');
+    res.send('<script>' + fs.readFileSync(path.resolve(__dirname, '../web/parse-auth-fragment.js')) + '</script>');
     res.end();
 });
 

@@ -1,2 +1,3 @@
 #!/bin/bash
-node authorization-server.js
+echo $(ls)
+node ./spawn/authorization-server.js

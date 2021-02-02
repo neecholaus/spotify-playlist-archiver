@@ -50,7 +50,7 @@ class Auth {
             } catch (e) {
                 log('token could not be accessed', 'auth');
                 log('starting auth server', 'auth');
-                log('navigate here: http://localhost');
+                log('navigate here: http://localhost', 'auth');
 
                 // start server, resolve onece spawn dies
                 child.execFile(path.resolve(__dirname, '../scripts/start-server.sh'), () => {
