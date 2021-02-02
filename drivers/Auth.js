@@ -48,7 +48,7 @@ class Auth {
 
         return new Promise(async (resolve, reject) => {
             try {
-                accountAccess = this.readAccountAccessFile();
+                accountAccess = this._readAccountAccessFile();
                 log('token was found', 'auth');
                 resolve(accountAccess);
             } catch (e) {
@@ -104,7 +104,7 @@ class Auth {
      * @throws Error
      * @returns object|void
      */
-    static readAccountAccessFile() {
+    static _readAccountAccessFile() {
         if (! fs.existsSync(path.resolve(__dirname, '../account_access.json'))) {
             throw Error('account access file does not exist');
         }
