@@ -13,6 +13,10 @@ class Auth {
         /** @var int */
         let authAttemps = 0;
 
+        await self._attemptAuthorization();
+    }
+
+    async _attemptAuthorization() {
         while (!accountAccess && authAttemps <= 2) {
             /** @var bool */
             let mustRunThroughAuth = false;
@@ -37,7 +41,15 @@ class Auth {
                 log('navigate here: http://localhost');
 
                 // start server
-                child.execFileSync(path.resolve(__dirname, '../scripts/start-server.sh'));
+                // child.execFileSync(path.resolve(__dirname, '../scripts/start-server.sh'));
+
+                const spawendAuthServer = child.execFile(path.resolve(__dirname, '../scripts/start-server.sh'), () => {
+                    console.log('server is dead');
+                });
+
+                spawendAuthServer.stdout.on('data', data => {
+                    console.log('from child - ' + data);
+                })
             }
 
             authAttemps++;
