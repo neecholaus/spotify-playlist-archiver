@@ -52,12 +52,11 @@ class Auth {
                 log('starting auth server', 'auth');
                 log('navigate here: http://localhost');
 
-                // start server
-                child.execFileSync(path.resolve(__dirname, '../scripts/start-server.sh'));
-
-                log('new authorization obtained, re-checking', 'auth');
-
-                resolve(null);
+                // start server, resolve onece spawn dies
+                child.execFile(path.resolve(__dirname, '../scripts/start-server.sh'), () => {
+                    log('new authorization obtained, re-checking', 'auth');
+                    resolve(null);
+                });
             }
         })
     }
@@ -74,7 +73,7 @@ class Auth {
         return new Promise(async (resolve, reject) => {
         
             // hit spotify and check validity of token
-            log('checking token with spotify', 'auth');
+            log('verifying token with spotify', 'auth');
 
             let spotify = new baseSpotify(unverifiedAccountAccess);
 
