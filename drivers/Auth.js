@@ -6,81 +6,99 @@ const {log} = require('./Log');
 const baseSpotify = require('./Spotify');
 
 class Auth {
-    static async boot(dieOnFail=false) {
+    static async boot() {
         /** @var object */
-        let accountAccess;
+        let verifiedAccountAccess;
 
         /** @var int */
         let authAttemps = 0;
 
-        await self._attemptAuthorization();
-    }
+        while (! verifiedAccountAccess && authAttemps <= 2) {
+            let unverifiedAccountAccess = await Auth._getAuthorization();
 
-    async _attemptAuthorization() {
-        while (!accountAccess && authAttemps <= 2) {
-            /** @var bool */
-            let mustRunThroughAuth = false;
-
-            try {
-                accountAccess = this._readAndParseAccountAccess();
-                log('token was found', 'auth');
-            } catch (e) {
-                log('token could not be accessed', 'auth');
-                mustRunThroughAuth = true;
+            if (unverifiedAccountAccess) {
+                verifiedAccountAccess = await Auth._verifyAuthorization(
+                    unverifiedAccountAccess
+                );
             }
 
-            if (mustRunThroughAuth) {
-                // allow 2 attempts, on third show error and exit
-                if (authAttemps == 2) {
-                    log('failed to authenticate twice, shutting down', 'auth');
-                    process.exit();
-                }
-
-                log('starting auth server', 'auth');
-
-                log('navigate here: http://localhost');
-
-                // start server
-                // child.execFileSync(path.resolve(__dirname, '../scripts/start-server.sh'));
-
-                const spawendAuthServer = child.execFile(path.resolve(__dirname, '../scripts/start-server.sh'), () => {
-                    console.log('server is dead');
-                });
-
-                spawendAuthServer.stdout.on('data', data => {
-                    console.log('from child - ' + data);
-                })
+            // allow 2 attempts, on third show error and exit
+            if (authAttemps >= 2 && ! verifiedAccountAccess) {
+                log('failed to authenticate twice, shutting down', 'auth');
+                process.exit();
             }
 
             authAttemps++;
         }
-
-        // hit spotify and check validity of token
-        log('checking token with spotify', 'auth');
-
-        let spotify = new baseSpotify(accountAccess);
-
-        let userData = await spotify.getUser();
-
-        if (! userData) {
-            log('spotify rejected the token', 'auth');
-            log('deleting bad token and trying again', 'auth');
-
-            if (!dieOnFail) {
-                // token was bad for some reason,
-                // remove existing access json so we run through auth server again
-                fs.unlinkSync(path.resolve(__dirname, '../account_access.json'));
-                this.boot(true);
-            }
-        } else {
-            log(`you are authenticated as "${userData.display_name}"`, 'auth');
-
-            // todo - call next step in app?
-        }
     }
 
     /**
-     * @throws Errora
+     * Check for existing account access json file, starts
+     * auth server if not found.
+     * 
+     * Returns promise that resolves to object or null.
+     */
+    static async _getAuthorization() {
+        /** @var object */
+        let accountAccess;
+
+        return new Promise(async (resolve, reject) => {
+            try {
+                accountAccess = this._readAndParseAccountAccess();
+                log('token was found', 'auth');
+                resolve(accountAccess);
+            } catch (e) {
+                log('token could not be accessed', 'auth');
+                log('starting auth server', 'auth');
+                log('navigate here: http://localhost');
+
+                // start server
+                child.execFileSync(path.resolve(__dirname, '../scripts/start-server.sh'));
+
+                log('new authorization obtained, re-checking', 'auth');
+
+                resolve(null);
+            }
+        })
+    }
+
+    /**
+     * Takes passed account authorization and attempts
+     * to get user data from spotify.
+     * 
+     * Returns promise that resolves to object or null.
+     * 
+     * @param object unverifiedAccountAccess 
+     */
+    static async _verifyAuthorization(unverifiedAccountAccess) {
+        return new Promise(async (resolve, reject) => {
+        
+            // hit spotify and check validity of token
+            log('checking token with spotify', 'auth');
+
+            let spotify = new baseSpotify(unverifiedAccountAccess);
+
+            let userData = await spotify.getUser();
+
+            if (! userData) {
+                log('spotify rejected the token', 'auth');
+                log('deleting bad token and trying again', 'auth');
+
+                // token was bad for some reason,
+                // remove existing access json so we run through auth server again
+                fs.unlinkSync(path.resolve(__dirname, '../account_access.json'));
+            } else {
+                log(`you are authenticated as "${userData.display_name}"`, 'auth');
+
+                resolve(unverifiedAccountAccess);
+            }
+
+            resolve(null);
+        });
+    }
+
+    /**
+     * @throws Error
      * @returns object|void
      */
     static _readAndParseAccountAccess() {
