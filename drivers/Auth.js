@@ -6,7 +6,7 @@ const {log} = require('./Log');
 const baseSpotify = require('./Spotify');
 
 class Auth {
-    static async boot() {
+    static async getVerifiedAccountAccessToken() {
         return new Promise(async (resolve, reject) => {
             /** @var object */
             let verifiedAccountAccess;
@@ -15,10 +15,10 @@ class Auth {
             let authAttemps = 0;
 
             while (! verifiedAccountAccess && authAttemps <= 2) {
-                let unverifiedAccountAccess = await Auth._getAuthorization();
+                let unverifiedAccountAccess = await Auth._getExistingAccountAccessOrObtainNew();
 
                 if (unverifiedAccountAccess) {
-                    verifiedAccountAccess = await Auth._verifyAuthorization(
+                    verifiedAccountAccess = await Auth._verifyAccountAccess(
                         unverifiedAccountAccess
                     );
                 }
@@ -41,16 +41,14 @@ class Auth {
      * auth server if not found.
      * 
      * Returns promise that resolves to object or null.
-     * 
-     * TODO - better naming convention compared to @readAndParseAccountAccess
      */
-    static async _getAuthorization() {
+    static async _getExistingAccountAccessOrObtainNew() {
         /** @var object */
         let accountAccess;
 
         return new Promise(async (resolve, reject) => {
             try {
-                accountAccess = this.readAndParseAccountAccess();
+                accountAccess = this.readAccountAccessFile();
                 log('token was found', 'auth');
                 resolve(accountAccess);
             } catch (e) {
@@ -75,7 +73,7 @@ class Auth {
      * 
      * @param object unverifiedAccountAccess 
      */
-    static async _verifyAuthorization(unverifiedAccountAccess) {
+    static async _verifyAccountAccess(unverifiedAccountAccess) {
         return new Promise(async (resolve, reject) => {
         
             // hit spotify and check validity of token
@@ -106,7 +104,7 @@ class Auth {
      * @throws Error
      * @returns object|void
      */
-    static readAndParseAccountAccess() {
+    static readAccountAccessFile() {
         if (! fs.existsSync(path.resolve(__dirname, '../account_access.json'))) {
             throw Error('account access file does not exist');
         }
