@@ -4,5 +4,7 @@ const auth = require('./drivers/Auth');
 log('== Spotify Playlist Archiver ==');
 
 (async function () {
-    auth.boot()
+    const accessToken = await auth.boot();
+
+    // playlists
 })();

@@ -1,26 +1,22 @@
 const fs = require('fs');
-const { exit } = require('process');
+const path = require('path');
 
-const authorizationFilePath = './account_access.json';
+const auth = require('../drivers/Auth');
+const {log} = require('../drivers/Log');
+const baseSpotify = require('../drivers/Spotify');
+
+const authorizationFilePath = '../account_access.json';
 
 (async function () {
-    // ensure auth file exists
-    if (!fs.existsSync(authorizationFilePath)) {
-        console.log('account authorization not found, please run through account authorization');
-        exit;
-    }
-
-    // parse auth file
-    let authorizationFragment;
     try {
-        authorizationFragment = JSON.parse(fs.readFileSync(authorizationFilePath, 'utf-8'));
+        const accountAccess = auth.readAndParseAccountAccess();
     } catch (e) {
-        console.log('authorization could not be parsed, please run through account authorization again');
-        exit;
+        log('no accounts access, run through auth flow', 'playlists');
+        return;
     }
 
     // create instance of driver
-    const SpotifyDriver = new (require('./SpotifyDriver'))(authorizationFragment);
+    const SpotifyDriver = new baseSpotify(accountAccess);
 
     console.log(await SpotifyDriver.getPlaylists());
 })();
