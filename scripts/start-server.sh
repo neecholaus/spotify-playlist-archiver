@@ -1,2 +1,2 @@
 #!/bin/bash
-node ./spawn/authorization-server.js
+node ./spawnables/authorization-server.js
