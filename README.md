@@ -1,6 +1,6 @@
 # Spotify Playlist Archiver
 ## Prerequisites
-Before this app is useful to you, you need to have a [Spotify Developer](https://developer.spotify.com/) account as well as an app and that app's `Client ID` set in the `.env` file under the name `SPOTIFY_CLIENT_ID`.
+Before this app is useful to you, you need to have a [Spotify Developer](https://developer.spotify.com/) account. Once you have an account create a new app. The only configuration you need to set is the redirect url. Set it to `http://localhost/redirect`. Last step is to copy your `Client ID` and set in the `.env` file under the name `SPOTIFY_CLIENT_ID`.
 
 ---
 
