@@ -5,8 +5,9 @@ const {log} = require('./drivers/log');
 log('== Spotify Playlist Archiver ==');
 
 (async function () {
-    const accessToken = await Auth.getVerifiedAccountAccessToken();
+    // NOTE: accountAccess is expected to be the full object stored in ./account_access.json not just the access token.
 
-    // playlists
-    const archiver = new Archiver(accessToken);
+    const accountAccess = await Auth.getVerifiedAccountAccessToken();
+
+    (new Archiver(accountAccess)).archiveAllPlaylists();
 })();

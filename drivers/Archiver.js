@@ -1,10 +1,19 @@
 const {log} = require('./Log');
+const baseSpotify = require('./Spotify');
 
 class Archiver {
-    /** @var string */
-    accessToken;
+    /** @var object */
+    accountAccess;
 
-    constructor(accessToken) {
-        this.accessToken = accessToken;
+    constructor(accountAccess) {
+        this.accountAccess = accountAccess;
+    }
+
+    async archiveAllPlaylists() {
+        const SpotifyDriver = new baseSpotify(this.accountAccess);
+
+        console.log(await SpotifyDriver.getPlaylists());
     }
 }
+
+module.exports = Archiver;

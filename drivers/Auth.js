@@ -32,7 +32,7 @@ class Auth {
                 authAttemps++;
             }
 
-            resolve(verifiedAccountAccess.access_token);
+            resolve(verifiedAccountAccess);
         });
     }
 
