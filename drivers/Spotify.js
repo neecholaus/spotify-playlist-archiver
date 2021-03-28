@@ -52,9 +52,9 @@ class Spotify {
         return this.getResponseFromSpotify(endpoint);
     }
 
-    /** 
+    /**
      * Get the first list of the user's playlists.
-     * @return object|null 
+     * @return object|null
      */
     async getFirstPlaylists() {
         const endpoint = this.baseEndpoint + '/me/playlists';
@@ -71,26 +71,36 @@ class Spotify {
     }
 
     /**
-     * @return array
+     * Will navigate through all pages spotify offers for the resource
+     * present in the first page.
+     * @param object firstPage 
      */
-    async fetchAllPlaylists() {
-        const initialResponse = await this.getFirstPlaylists();
+    async _pullAllItemsFromAllPages(firstPage) {
+        let items = firstPage.items;
 
-        let playlists = initialResponse.items;
-
-        // spotify provided `next` value which is a url providing easy pagination
-        if (initialResponse.next) {
-            let nextUrl = initialResponse.next;
+        // spotify provided `next` value which is a
+        // url providing easy pagination
+        if (firstPage.next) {
+            let nextUrl = firstPage.next;
 
             // as long as there are more pages, keep pulling playlists
             while (nextUrl) {
-                const morePlaylists = await this.getResponseFromSpotify(nextUrl);
-                playlists = playlists.concat(morePlaylists.items);
-                nextUrl = morePlaylists.next ?? null;
+                const nextPage = await this.getResponseFromSpotify(nextUrl);
+                items = items.concat(nextPage.items);
+                nextUrl = nextPage.next ?? null;
             }
         }
 
-        return playlists;
+        return items;
+    }
+
+    /**
+     * @return array
+     */
+    async fetchAllPlaylists() {
+        const firstPage = await this.getFirstPlaylists();
+
+        return this._pullAllItemsFromAllPages(firstPage);
     }
 
     /**
@@ -98,40 +108,18 @@ class Spotify {
      * @return array
      */
     async fetchAllTracksInPlaylist(playlistId) {
-        let initialResponse = await this.getFirstTracksInPlaylist(playlistId);
+        let firstPage = await this.getFirstTracksInPlaylist(playlistId);
 
-        let tracks = initialResponse.items;
-
-        let nextUrl = initialResponse.next;
-    
-        // while 'next' field, pull tracks
-        while (nextUrl) {
-            const moreTracks = await this.getResponseFromSpotify(nextUrl);
-            tracks = tracks.concat(moreTracks.items);
-            nextUrl = moreTracks.next ?? null;
-        }
-
-        return tracks;
+        return this._pullAllItemsFromAllPages(firstPage);
     }
 
     /**
      * @return array
      */
     async fetchAllLikedSongs() {
-        let initialResponse = await this.getFirstLikedSongs();
+        let firstPage = await this.getFirstLikedSongs();
 
-        let tracks = initialResponse.items;
-
-        let nextUrl = initialResponse.next;
-    
-        // while 'next' field, pull tracks
-        while (nextUrl) {
-            const moreTracks = await this.getResponseFromSpotify(nextUrl);
-            tracks = tracks.concat(moreTracks.items);
-            nextUrl = moreTracks.next ?? null;
-        }
-
-        return tracks;
+        return this._pullAllItemsFromAllPages(firstPage);
     }
 
     // TODO - abstract multipage resource fetching into one reusable method
