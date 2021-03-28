@@ -52,6 +52,21 @@ class Spotify {
             })
             .catch(() => null);
     }
+
+    async getPlaylistsFromURL(url) {
+        return await fetch(url, {
+            headers: {
+                Authorization: 'Bearer ' + this.acctAccess.access_token
+            }
+        })
+            .then(res => {
+                if (res.status !== 200)
+                    throw new Error('Response was not 200');
+
+                return res.json();
+            })
+            .catch(() => null);
+    }
 }
 
 module.exports = Spotify;
