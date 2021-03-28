@@ -12,27 +12,19 @@ class Archiver {
     }
 
     async archiveAllPlaylists() {
-        const playlists = this.fetchAllPlaylists();
-    }
+        // const playlists = await this.spotify.fetchAllPlaylists();
 
-    async fetchAllPlaylists() {
-        const initialResponse = await this.spotify.getPlaylists();
+        let playlists = await this.spotify.getFirstPlaylists();
 
-        let playlists = initialResponse.items;
+        playlists = playlists.items;
 
-        // spotify provided `next` value which is a url providing easy pagination
-        if (initialResponse.next) {
-            let nextUrl = initialResponse.next;
+        playlists.map(async playlist => {
+            const tracks = await this.spotify.fetchAllTracksInPlaylist(playlist.id);
 
-            // as long as there are more pages, keep pulling playlists
-            while (nextUrl) {
-                const morePlaylists = await this.spotify.getPlaylistsFromURL(nextUrl);
-                playlists = playlists.concat(morePlaylists.items);
-                nextUrl = morePlaylists.next ?? null;
-            }
-        }
-
-        return playlists;
+            tracks.forEach(x => {
+                console.log(playlist.name + ' - ' + x.track.name);
+            });
+        });
     }
 }
 
