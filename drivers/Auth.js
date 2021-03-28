@@ -6,6 +6,8 @@ const {log} = require('./Log');
 const baseSpotify = require('./Spotify');
 
 class Auth {
+    static logGroup = 'AUTH';
+    
     static async getVerifiedAccountAccessToken() {
         return new Promise(async (resolve, reject) => {
             /** @var object */
@@ -25,7 +27,7 @@ class Auth {
 
                 // allow 2 attempts, on third show error and exit
                 if (authAttemps >= 2 && ! verifiedAccountAccess) {
-                    log('failed to authenticate twice, shutting down', 'auth');
+                    log('failed to authenticate twice, shutting down', this.logGroup);
                     process.exit();
                 }
 
@@ -49,16 +51,16 @@ class Auth {
         return new Promise(async (resolve, reject) => {
             try {
                 accountAccess = this._readAccountAccessFile();
-                log('token was found', 'auth');
+                log('token was found', this.logGroup);
                 resolve(accountAccess);
             } catch (e) {
-                log('token could not be accessed', 'auth');
-                log('starting auth server', 'auth');
-                log('navigate here: http://localhost', 'auth');
+                log('token could not be accessed', this.logGroup);
+                log('starting auth server', this.logGroup);
+                log('navigate here: http://localhost', this.logGroup);
 
                 // start server, resolve onece spawn dies
                 child.execFile(path.resolve(__dirname, '../scripts/start-server.sh'), () => {
-                    log('new authorization obtained, re-checking', 'auth');
+                    log('new authorization obtained, re-checking', this.logGroup);
                     resolve(null);
                 });
             }
@@ -77,21 +79,21 @@ class Auth {
         return new Promise(async (resolve, reject) => {
         
             // hit spotify and check validity of token
-            log('verifying token with spotify', 'auth');
+            log('verifying token with spotify', this.logGroup);
 
             let spotify = new baseSpotify(unverifiedAccountAccess);
 
             let userData = await spotify.getUser();
 
             if (! userData) {
-                log('spotify rejected the token', 'auth');
-                log('deleting bad token and trying again', 'auth');
+                log('spotify rejected the token', this.logGroup);
+                log('deleting bad token and trying again', this.logGroup);
 
                 // token was bad for some reason,
                 // remove existing access json so we run through auth server again
                 fs.unlinkSync(path.resolve(__dirname, '../account_access.json'));
             } else {
-                log(`you are authenticated as "${userData.display_name}"`, 'auth');
+                log(`you are authenticated as "${userData.display_name}"`, this.logGroup);
 
                 resolve(unverifiedAccountAccess);
             }
