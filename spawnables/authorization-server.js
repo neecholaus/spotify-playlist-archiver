@@ -17,7 +17,7 @@ app.get('/', (req, res) => {
     // pull client id from env
     const clientID = process.env.SPOTIFY_CLIENT_ID;
 
-    const scopes = 'user-read-email user-read-private playlist-read-private playlist-read-collaborative';
+    const scopes = 'user-read-email user-read-private playlist-read-private playlist-read-collaborative user-library-read';
 
     let spotifyUrl = [
         'https://accounts.spotify.com/authorize',

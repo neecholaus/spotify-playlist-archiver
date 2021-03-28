@@ -43,8 +43,17 @@ class Spotify {
         return this.getResponseFromSpotify(endpoint);
     }
 
+    /**
+     * Get the first list of user's liked songs.
+     * @return object|null
+     */
+    async getFirstLikedSongs() {
+        const endpoint = this.baseEndpoint + '/me/tracks?limit=50';
+        return this.getResponseFromSpotify(endpoint);
+    }
+
     /** 
-     * Returns the first list of the user's playlists.
+     * Get the first list of the user's playlists.
      * @return object|null 
      */
     async getFirstPlaylists() {
@@ -58,7 +67,7 @@ class Spotify {
      */
     async getFirstTracksInPlaylist(playlistId) {
         const endpoint = `${this.baseEndpoint}/playlists/${playlistId}/tracks`;
-        return await this.getResponseFromSpotify(endpoint);
+        return this.getResponseFromSpotify(endpoint);
     }
 
     /**
@@ -104,6 +113,28 @@ class Spotify {
 
         return tracks;
     }
+
+    /**
+     * @return array
+     */
+    async fetchAllLikedSongs() {
+        let initialResponse = await this.getFirstLikedSongs();
+
+        let tracks = initialResponse.items;
+
+        let nextUrl = initialResponse.next;
+    
+        // while 'next' field, pull tracks
+        while (nextUrl) {
+            const moreTracks = await this.getResponseFromSpotify(nextUrl);
+            tracks = tracks.concat(moreTracks.items);
+            nextUrl = moreTracks.next ?? null;
+        }
+
+        return tracks;
+    }
+
+    // TODO - abstract multipage resource fetching into one reusable method
 }
 
 module.exports = Spotify;

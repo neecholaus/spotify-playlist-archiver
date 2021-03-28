@@ -12,13 +12,19 @@ class Archiver {
     }
 
     async archiveAllPlaylists() {
-        const playlists = await this.spotify.fetchAllPlaylists();
+        const
+            likedSongs = await this.spotify.fetchAllLikedSongs(),
+            playlists = await this.spotify.fetchAllPlaylists();
+
+        likedSongs.map(track => {
+            // echo into file
+        });
 
         playlists.map(async playlist => {
             const tracks = await this.spotify.fetchAllTracksInPlaylist(playlist.id);
 
             tracks.forEach(x => {
-                console.log(playlist.name + ' - ' + x.track.name);
+                // echo into file
             });
         });
     }
