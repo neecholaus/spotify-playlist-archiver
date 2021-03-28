@@ -4,7 +4,7 @@ Before this app is useful to you, you need to have a [Spotify Developer](https:/
 
 ---
 
-## Usage
+## Using the Archiver
 Start the app by running:
 
 ```node kernel.js```
