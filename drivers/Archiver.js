@@ -1,6 +1,7 @@
 const fs = require('fs');
 const {log} = require('./Log');
 const baseSpotify = require('./Spotify');
+const path = require('path');
 
 class Archiver {
     /** @var object */
@@ -13,6 +14,7 @@ class Archiver {
     }
 
     async archiveAllPlaylists() {
+        // TODO - minimize file IO, join tracks on their desired info and emit once per playlist
         const
             likedSongs = await this.spotify.fetchAllLikedSongs(),
             playlists = await this.spotify.fetchAllPlaylists();
@@ -37,7 +39,15 @@ class Archiver {
         });
 
         playlists.map(async playlist => {
-            const playlistFilePath = outputPath + '/' + playlist.name;
+            let filename = playlist.name;
+
+            if (filename != path.basename(filename)) {
+                console.log(`'${filename}' is an invalid filepath - ignoring`);
+
+                filename = '[invalid-playlist-names]';
+            }
+
+            const playlistFilePath = outputPath + '/' + filename;
 
             const tracks = await this.spotify.fetchAllTracksInPlaylist(playlist.id);
 
