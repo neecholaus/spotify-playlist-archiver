@@ -12,11 +12,7 @@ class Archiver {
     }
 
     async archiveAllPlaylists() {
-        // const playlists = await this.spotify.fetchAllPlaylists();
-
-        let playlists = await this.spotify.getFirstPlaylists();
-
-        playlists = playlists.items;
+        const playlists = await this.spotify.fetchAllPlaylists();
 
         playlists.map(async playlist => {
             const tracks = await this.spotify.fetchAllTracksInPlaylist(playlist.id);

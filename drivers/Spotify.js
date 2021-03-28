@@ -61,6 +61,9 @@ class Spotify {
         return await this.getResponseFromSpotify(endpoint);
     }
 
+    /**
+     * @return array
+     */
     async fetchAllPlaylists() {
         const initialResponse = await this.getFirstPlaylists();
 
@@ -81,6 +84,10 @@ class Spotify {
         return playlists;
     }
 
+    /**
+     * @param int playlistId 
+     * @return array
+     */
     async fetchAllTracksInPlaylist(playlistId) {
         let initialResponse = await this.getFirstTracksInPlaylist(playlistId);
 
