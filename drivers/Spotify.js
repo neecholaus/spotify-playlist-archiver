@@ -121,8 +121,6 @@ class Spotify {
 
         return this._pullAllItemsFromAllPages(firstPage);
     }
-
-    // TODO - abstract multipage resource fetching into one reusable method
 }
 
 module.exports = Spotify;
