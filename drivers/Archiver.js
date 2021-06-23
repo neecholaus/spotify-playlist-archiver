@@ -31,11 +31,11 @@ class Archiver {
 
         // archive all liked songs
         likedSongs.map(track => {
-            track = track.track;
+            const trackInfo = track.track;
 
-            const likedSongFilepath = outputPath + '/Liked\ Songs';
+            const likedSongFilepath = outputPath + '/Liked\ Songs.txt';
 
-            fs.appendFileSync(likedSongFilepath, "\n" + track.artists[0].name + ' - ' + track.name);
+            fs.appendFileSync(likedSongFilepath, "\n" + trackInfo.artists[0].name + ' - ' + trackInfo.name + ' - ' + track.added_at);
         });
 
         playlists.map(async playlist => {
@@ -47,14 +47,14 @@ class Archiver {
                 filename = '[invalid-playlist-names]';
             }
 
-            const playlistFilePath = outputPath + '/' + filename;
+            const playlistFilePath = outputPath + '/' + filename + '.txt';
 
             const tracks = await this.spotify.fetchAllTracksInPlaylist(playlist.id);
 
             tracks.forEach(track => {
-                track = track.track;
+                const trackInfo = track.track;
 
-                fs.appendFileSync(playlistFilePath, "\n" + track.artists[0].name + ' - ' + track.name)
+                fs.appendFileSync(playlistFilePath, "\n" + trackInfo.artists[0].name + ' - ' + trackInfo.name + ' - ' + track.added_at)
             });
         });
     }
