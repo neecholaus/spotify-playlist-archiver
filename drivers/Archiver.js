@@ -15,26 +15,24 @@ class Archiver {
 
     async archiveAllPlaylists() {
         // TODO - minimize file IO, join tracks on their desired info and emit once per playlist
-        const
-            likedSongs = await this.spotify.fetchAllLikedSongs(),
-            playlists = await this.spotify.fetchAllPlaylists();
+        const playlists = await this.spotify.fetchAllPlaylists();
 
         const outputPath = './archives';
 
         // clear all output and recreate dir
         if (fs.existsSync(outputPath)) {
-            fs.rmdirSync(outputPath, {
+            fs.rmSync(outputPath, {
                 recursive: true
             });
         }
         fs.mkdirSync(outputPath);
 
         // archive all liked songs
+        console.log('[ARCHIVER] pulling playlist (Liked Songs)');
+        const likedSongs = await this.spotify.fetchAllLikedSongs();
         likedSongs.map(track => {
             const trackInfo = track.track;
-
             const likedSongFilepath = outputPath + '/Liked\ Songs.txt';
-
             fs.appendFileSync(likedSongFilepath, "\n" + trackInfo.artists[0].name + ' - ' + trackInfo.name + ' - ' + track.added_at);
         });
 
@@ -42,10 +40,10 @@ class Archiver {
             let filename = playlist.name;
 
             if (filename != path.basename(filename)) {
-                console.log(`'${filename}' is an invalid filepath - ignoring`);
-
+                console.log(`'${filename}' is an invalid filepath - modifying`);
                 filename = '[invalid-playlist-names]';
             }
+            console.log(`[ARCHIVER] pulling playlist (${filename})`);
 
             const playlistFilePath = outputPath + '/' + filename + '.txt';
 
