@@ -5,7 +5,7 @@ import (
 	"net/http"
 )
 
-func parseFromAuthRequestQuery(r *http.Request) (*fromAuthRequestParams, error) {
+func makeSpotifyOauthScheme(r *http.Request) (*spotifyOauthScheme, error) {
 	params := r.URL.Query()
 
 	// Ensure `code` value was provided
@@ -14,7 +14,7 @@ func parseFromAuthRequestQuery(r *http.Request) (*fromAuthRequestParams, error) 
 		return nil, errors.New("NO_CODE")
 	}
 
-	return &fromAuthRequestParams{
+	return &spotifyOauthScheme{
 		Code: params.Get("code"),
 	}, nil
 }

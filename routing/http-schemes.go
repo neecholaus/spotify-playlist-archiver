@@ -1,5 +1,5 @@
 package routing
 
-type fromAuthRequestParams struct {
+type spotifyOauthScheme struct {
 	Code string `json:"string"`
 }
