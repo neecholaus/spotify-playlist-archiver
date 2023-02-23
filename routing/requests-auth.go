@@ -32,6 +32,7 @@ func ingestOAuth(w http.ResponseWriter, r *http.Request) {
 
 	parsed, err := template.ParseFiles(
 		"resources/html/layout.html",
+		"resources/html/nav.html",
 		"resources/html/from-auth.html",
 	)
 	if err != nil {

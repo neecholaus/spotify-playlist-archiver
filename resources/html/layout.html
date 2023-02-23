@@ -2,8 +2,25 @@
 <html>
     <head>
         <title>Playlist Archiver</title>
+        <link rel="stylesheet" href="/public/css/styles.css" />
+        <link rel="stylesheet" href="/public/css/inline-styles.css" />
     </head>
     <body>
-        {{block "content" .}} {{end}}
+        <div id="app">
+            <div id="app-hero">
+                <p class="text-3xl font-bold text-slate-600">Archiver</p>
+            </div>
+            <div id="app-nav">
+                {{block "nav" .}} {{end}}
+            </div>
+            <div id="app-content">
+                {{block "content" .}} {{end}}
+            </div>
+            <div id="app-footer">
+                <a href="https://github.com/neecholaus/spotify-playlist-archiver">
+                    View on Github
+                </a>
+            </div>
+        </div>
     </body>
 </html>

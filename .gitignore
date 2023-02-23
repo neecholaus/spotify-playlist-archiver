@@ -3,3 +3,6 @@
 #IDE & OS
 .idea
 .DS_Store
+
+# Binaries
+tailwindcss
