@@ -1,5 +1,5 @@
 package routing
 
-type spotifyOauthScheme struct {
+type ingestOauthScheme struct {
 	Code string `json:"string"`
 }

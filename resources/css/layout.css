@@ -36,8 +36,8 @@
         rounded-sm
         py-2
         px-4
-        hover:bg-blue-100
-        hover:text-blue-500
+        hover:bg-green-100
+        hover:text-green-500
 }
 
 #app-content {
@@ -48,14 +48,12 @@
 }
 
 #app-footer {
-    font-family: monospace, sans-serif;
     @apply
         border
         border-slate-200
         border-t
         border-t-2
         p-2.5
-        text-sm
         text-slate-500
         rounded-b-md
         text-right

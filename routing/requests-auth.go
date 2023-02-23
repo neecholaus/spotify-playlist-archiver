@@ -3,6 +3,7 @@ package routing
 import (
 	"fmt"
 	"html/template"
+	"neecholaus/spa/spotify"
 	"net/http"
 	"net/url"
 	"os"
@@ -28,7 +29,15 @@ func ingestOAuth(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	fmt.Println(query.Code)
+	access, err := spotify.GetAccessToken(query.Code)
+	if err != nil {
+		fmt.Printf("get (access token): %s\n", err.Error())
+		w.WriteHeader(500)
+		_, _ = w.Write([]byte(err.Error()))
+		return
+	}
+
+	fmt.Println(access.AccessToken)
 
 	parsed, err := template.ParseFiles(
 		"resources/html/layout.html",

@@ -21,7 +21,7 @@ tailwind-watch-templates: ensure_tailwind_cli
 	@./tailwindcss --watch -c ./tailwind.config.js -o ./resources/public/css/inline-styles.css
 
 tailwind-watch-components: ensure_tailwind_cli
-	@./tailwindcss --watch -i ./resources/css/*.css -o ./resources/public/css/styles.css
+	@./tailwindcss --watch -m -i ./resources/css/* -o ./resources/public/css/styles.css
 
 bundle-js:
 	# Removing existing bundle
