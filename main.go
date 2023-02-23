@@ -17,8 +17,7 @@ func main() {
 
 	router := mux.NewRouter()
 
-	routing.RegisterPublicDir(router)
-	routing.RegisterRoutes(router)
+	routing.Register(router)
 
 	server := http.Server{
 		Handler: router,

@@ -37,8 +37,19 @@ func ingestOAuth(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	fmt.Println(access.AccessToken)
+	// todo - need dynamic session
+	session := "test"
+	setToken(session, access.AccessToken)
 
+	http.SetCookie(w, &http.Cookie{
+		Name:  "session",
+		Value: session,
+	})
+
+	http.Redirect(w, r, "/authed", 302)
+}
+
+func authed(w http.ResponseWriter, r *http.Request) {
 	parsed, err := template.ParseFiles(
 		"resources/html/layout.html",
 		"resources/html/nav.html",

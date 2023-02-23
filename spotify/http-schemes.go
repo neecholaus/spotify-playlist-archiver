@@ -1,11 +1,11 @@
 package spotify
 
 type AccessTokenResponse struct {
-	AccessToken  string `json:"accessToken"`
-	TokenScope   string `json:"tokenScope"`
+	AccessToken  string `json:"access_token"`
+	TokenScope   string `json:"token_scope"`
 	Scope        string `json:"scope"`
-	ExpiresIn    int64  `json:"expiresIn"`
-	RefreshToken string `json:"refreshToken"`
+	ExpiresIn    int64  `json:"expires_in"`
+	RefreshToken string `json:"refresh_token"`
 }
 
 type errorResponse struct {
