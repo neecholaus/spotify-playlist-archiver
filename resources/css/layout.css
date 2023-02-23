@@ -5,12 +5,12 @@
         mx-auto
         max-w-5xl
         shadow-xl
-        rounded-b-md
+        rounded-b-sm
 }
 
 #app #app-hero {
     @apply
-        rounded-t-md
+        rounded-t-sm
         mt-5
         pt-12
         px-5
@@ -55,7 +55,7 @@
         border-t-2
         p-2.5
         text-slate-500
-        rounded-b-md
+        rounded-b-sm
         text-right
 }
 

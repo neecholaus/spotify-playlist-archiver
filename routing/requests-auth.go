@@ -49,21 +49,21 @@ func ingestOAuth(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "/authed", 302)
 }
 
-func authed(w http.ResponseWriter, r *http.Request) {
+func authedLanding(w http.ResponseWriter, r *http.Request) {
 	parsed, err := template.ParseFiles(
 		"resources/html/layout.html",
 		"resources/html/nav.html",
-		"resources/html/from-auth.html",
+		"resources/html/authed-landing.html",
 	)
 	if err != nil {
-		fmt.Printf("error while parsing from-auth.html: %s\n", err.Error())
+		fmt.Printf("error while parsing authed-landing.html: %s\n", err.Error())
 		w.WriteHeader(500)
 		return
 	}
 
 	err = parsed.Execute(w, nil)
 	if err != nil {
-		fmt.Printf("error while executing parsed from-auth.html: %s\n", err.Error())
+		fmt.Printf("error while executing parsed authed-landing.html: %s\n", err.Error())
 		w.WriteHeader(500)
 		return
 	}
