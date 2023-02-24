@@ -9,6 +9,21 @@ import (
 	"os"
 )
 
+func landing(w http.ResponseWriter, r *http.Request) {
+	parsed, err := template.ParseFiles(
+		"resources/html/layout.html",
+		"resources/html/nav.html",
+		"resources/html/landing.html",
+	)
+	if err != nil {
+		fmt.Printf("error while parsing authed-landing.html: %s\n", err.Error())
+		w.WriteHeader(500)
+		return
+	}
+
+	_ = parsed.Execute(w, r)
+}
+
 func redirectToOauth(w http.ResponseWriter, r *http.Request) {
 	scopes := "user-read-email user-read-private playlist-read-private playlist-read-collaborative user-library-read"
 
@@ -25,15 +40,14 @@ func ingestOAuth(w http.ResponseWriter, r *http.Request) {
 	query, err := makeSpotifyOauthScheme(r)
 	if err != nil {
 		fmt.Printf("error while parsing query: %s\n", err.Error())
-		w.WriteHeader(500)
+		http.Redirect(w, r, "/error", 302)
 		return
 	}
 
 	access, err := spotify.GetAccessToken(query.Code)
 	if err != nil {
 		fmt.Printf("get (access token): %s\n", err.Error())
-		w.WriteHeader(500)
-		_, _ = w.Write([]byte(err.Error()))
+		http.Redirect(w, r, "/error", 302)
 		return
 	}
 
@@ -47,6 +61,21 @@ func ingestOAuth(w http.ResponseWriter, r *http.Request) {
 	})
 
 	http.Redirect(w, r, "/authed", 302)
+}
+
+func errorLanding(w http.ResponseWriter, r *http.Request) {
+	parsed, err := template.ParseFiles(
+		"resources/html/layout.html",
+		"resources/html/nav.html",
+		"resources/html/error-landing.html",
+	)
+	if err != nil {
+		fmt.Printf("error while parsing error-landing.html: %s", err)
+		w.WriteHeader(500)
+		return
+	}
+
+	_ = parsed.Execute(w, nil)
 }
 
 func authedLanding(w http.ResponseWriter, r *http.Request) {

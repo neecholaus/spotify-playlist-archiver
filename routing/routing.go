@@ -18,7 +18,9 @@ func registerPublicDir(router *mux.Router) {
 }
 
 func registerRoutes(router *mux.Router) {
+	router.HandleFunc("/", landing)
 	router.HandleFunc("/auth", redirectToOauth)
 	router.HandleFunc("/ingest-auth", ingestOAuth)
+	router.HandleFunc("/error", errorLanding)
 	router.HandleFunc("/authed", authedLanding)
 }
