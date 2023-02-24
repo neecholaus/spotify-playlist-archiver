@@ -23,6 +23,12 @@ tailwind-watch-templates: ensure_tailwind_cli
 tailwind-watch-components: ensure_tailwind_cli
 	@./tailwindcss --watch -m -i ./resources/css/* -o ./resources/public/css/styles.css
 
+watch-js:
+	@while true; \
+		do \
+		fswatch -o ./resources/js/* | make bundle-js; \
+		done
+
 bundle-js:
 	# Removing existing bundle
 	@if [ -e resources/public/js/bundled.js ]; then\
