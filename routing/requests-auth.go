@@ -79,6 +79,14 @@ func errorLanding(w http.ResponseWriter, r *http.Request) {
 }
 
 func authedLanding(w http.ResponseWriter, r *http.Request) {
+	// todo - make into middleware
+	// Ensure session cookie was provided
+	_, err := r.Cookie("session")
+	if err != nil {
+		http.Redirect(w, r, "/", 302)
+		return
+	}
+
 	parsed, err := template.ParseFiles(
 		"resources/html/layout.html",
 		"resources/html/nav.html",
@@ -96,4 +104,13 @@ func authedLanding(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(500)
 		return
 	}
+}
+
+func logout(w http.ResponseWriter, r *http.Request) {
+	http.SetCookie(w, &http.Cookie{
+		Name:   "session",
+		MaxAge: -1,
+	})
+
+	http.Redirect(w, r, "/", 302)
 }
