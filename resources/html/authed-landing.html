@@ -2,9 +2,13 @@
 
 <div class="p-6">
     <div class="bg-green-100 rounded-sm p-3 text-green-700">
-        <h1 class="text-lg font-bold">Hang tight</h1>
+        <h1 class="text-lg font-bold">Hang tight<span id="loading-dots" style="margin-left:3px;letter-spacing: 2px;"></span></h1>
         <p>Your account will be available shortly</p>
     </div>
 </div>
+
+<script>
+    new LoadingDots('#loading-dots');
+</script>
 
 {{ end }}

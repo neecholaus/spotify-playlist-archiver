@@ -34,4 +34,6 @@ class NavManager {
     }
 }
 
-new NavManager();
+window.addEventListener('load', () => {
+    new NavManager();
+});
