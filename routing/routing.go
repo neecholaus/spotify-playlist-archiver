@@ -23,5 +23,6 @@ func registerRoutes(router *mux.Router) {
 	router.HandleFunc("/ingest-auth", ingestOAuth)
 	router.HandleFunc("/error", errorLanding)
 	router.HandleFunc("/authed", authedLanding)
+	router.HandleFunc("/user-profile", userProfile)
 	router.HandleFunc("/logout", logout)
 }
