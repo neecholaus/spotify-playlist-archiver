@@ -22,7 +22,11 @@ func registerRoutes(router *mux.Router) {
 	router.HandleFunc("/auth", redirectToOauth)
 	router.HandleFunc("/ingest-auth", ingestOAuth)
 	router.HandleFunc("/error", errorLanding)
-	router.HandleFunc("/authed", authedLanding)
-	router.HandleFunc("/user-profile", userProfile)
-	router.HandleFunc("/logout", logout)
+
+	// Required session cookie
+	authRouter := router.PathPrefix("/").Subrouter()
+	authRouter.Use(requireSession)
+	authRouter.HandleFunc("/authed", authedLanding)
+	authRouter.HandleFunc("/user-profile", userProfile)
+	authRouter.HandleFunc("/logout", logout)
 }

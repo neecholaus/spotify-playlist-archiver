@@ -8,9 +8,7 @@ import (
 )
 
 func userProfile(w http.ResponseWriter, r *http.Request) {
-	// todo
-	// 	middleware to enforce auth
-
+	// Get cookie
 	cookie, err := r.Cookie("session")
 	if err != nil {
 		fmt.Println("no cookie")
@@ -18,14 +16,15 @@ func userProfile(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// Get token from session cookie
 	accessToken := getToken(cookie.Value)
-
 	if accessToken == "" {
 		fmt.Println("no session")
 		w.WriteHeader(400)
 		return
 	}
 
+	// Request profile from api
 	userProfile, err := spotify.GetUserProfile(accessToken)
 	if err != nil {
 		fmt.Println(err)
@@ -33,6 +32,7 @@ func userProfile(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// Encode profile data
 	encoded, err := json.Marshal(userProfile)
 	if err != nil {
 		fmt.Println(err)

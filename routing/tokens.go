@@ -18,6 +18,7 @@ func setToken(session string, token string) {
 
 func getToken(session string) string {
 	tokenStore.mu.Lock()
+	defer tokenStore.mu.Unlock()
 	token, ok := tokenStore.Tokens[session]
 	if ok != true {
 		return ""
