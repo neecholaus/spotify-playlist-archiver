@@ -27,5 +27,6 @@ func registerRoutes(router *mux.Router) {
 	authRouter.Use(requireSession)
 	authRouter.HandleFunc("/authed", authedLanding)
 	authRouter.HandleFunc("/user-profile", userProfile)
+	authRouter.HandleFunc("/playlists", userPlaylistsHandler)
 	authRouter.HandleFunc("/logout", logout)
 }

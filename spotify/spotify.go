@@ -64,3 +64,27 @@ func GetUserProfile(accessToken string) (*UserProfile, error) {
 
 	return userProfile, nil
 }
+
+func GetUserPlaylists(accessToken string) (*UserPlaylists, error) {
+	fmt.Println("GetUserPlaylists called")
+
+	request, err := http.NewRequest("GET", "https://api.spotify.com/v1/me/playlists", nil)
+	if err != nil {
+		return nil, fmt.Errorf("building request: %w", err)
+	}
+
+	request.Header.Set("Authorization", fmt.Sprintf("Bearer %s", accessToken))
+
+	client := http.Client{}
+	response, err := client.Do(request)
+	if err != nil {
+		return nil, fmt.Errorf("sending request: %w", err)
+	}
+
+	playlistsResponse, err := parseUserPlaylistsResponse(response)
+	if err != nil {
+		return nil, fmt.Errorf("parsing response: %w", err)
+	}
+
+	return playlistsResponse, nil
+}

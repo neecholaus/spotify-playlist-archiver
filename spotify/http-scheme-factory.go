@@ -58,11 +58,10 @@ func parseUserProfileResponse(r *http.Response) (*UserProfile, error) {
 		return nil, fmt.Errorf("reading body (user profile): %w", err)
 	}
 
-	// Check for error response body
 	if r.StatusCode != 200 {
 		errorResponse, err := parseApiErrorResponse(body)
 		if errorResponse != nil {
-			err = errors.New(errorResponse.Error.Messages)
+			err = errors.New(errorResponse.Error.Message)
 		}
 		return nil, err
 	}
@@ -73,6 +72,29 @@ func parseUserProfileResponse(r *http.Response) (*UserProfile, error) {
 	}
 
 	return &userProfile, nil
+}
+
+func parseUserPlaylistsResponse(r *http.Response) (*UserPlaylists, error) {
+	body, err := io.ReadAll(r.Body)
+	if err != nil {
+		return nil, fmt.Errorf("parsing response: %w", err)
+	}
+
+	if r.StatusCode != 200 {
+		errorResponse, err := parseApiErrorResponse(body)
+		if errorResponse != nil {
+			err = errors.New(errorResponse.Error.Message)
+		}
+		return nil, err
+	}
+
+	var playlistsResponse UserPlaylists
+	err = json.Unmarshal(body, &playlistsResponse)
+	if err != nil {
+		return nil, fmt.Errorf("unmarshalling: %w", err)
+	}
+
+	return &playlistsResponse, nil
 }
 
 func parseApiErrorResponse(body []byte) (*apiErrorResponse, error) {

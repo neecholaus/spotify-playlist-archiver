@@ -32,7 +32,7 @@ type UserPlaylist struct {
 
 type apiErrorResponse struct {
 	Error struct {
-		Status   int    `json:"status"`
-		Messages string `json:"message"`
+		Status  int    `json:"status"`
+		Message string `json:"message"`
 	}
 }

@@ -38,3 +38,35 @@ func userProfile(w http.ResponseWriter, r *http.Request) {
 
 	_, _ = w.Write(marshalledUserProfile)
 }
+
+func userPlaylistsHandler(w http.ResponseWriter, r *http.Request) {
+	cookie, err := r.Cookie("session")
+	if err != nil {
+		fmt.Println("no cookie")
+		w.WriteHeader(400)
+		return
+	}
+
+	accessToken := getToken(cookie.Value)
+	if accessToken == "" {
+		fmt.Println("no session")
+		w.WriteHeader(400)
+		return
+	}
+
+	userPlaylists, err := spotify.GetUserPlaylists(accessToken)
+	if err != nil {
+		fmt.Println(err)
+		w.WriteHeader(500)
+		return
+	}
+
+	marshalledUserPlaylists, err := json.Marshal(userPlaylists)
+	if err != nil {
+		fmt.Println(err)
+		w.WriteHeader(500)
+		return
+	}
+
+	_, _ = w.Write(marshalledUserPlaylists)
+}
