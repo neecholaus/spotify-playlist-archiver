@@ -1,14 +1,81 @@
 {{ define "content" }}
 
-<div class="p-6">
-    <div class="bg-green-100 rounded-sm p-3 text-green-700">
-        <h1 class="text-lg font-bold">Hang tight<span id="loading-dots" style="margin-left:3px;letter-spacing: 2px;"></span></h1>
-        <p>Your account will be available shortly</p>
-    </div>
+<div class="p-3">
+    <span id="user-profile" class="flex py-1 pr-6 pl-3 items-center bg-green-100 text-green-700 rounded-lg">
+        <img id="user-image" alt="User Image" class="border border-2" style="display:none;" />
+        <span id="display-name" class="text-green-700">
+            Loading Profile
+            <span class="user-profile-loading-dots"></span>
+        </span>
+    </span>
 </div>
 
+<style>
+    span#user-profile {
+        max-width: fit-content;
+    }
+    img#user-image {
+        border-radius: 100%;
+        width: 2.1em;
+        height: 2.1em;
+        border-color: rgba(0,0,0,0.13)
+    }
+    span#display-name {
+        margin-left: .9em;
+    }
+</style>
+
 <script>
-    new LoadingDots('#loading-dots');
+    class Api {
+        static async getUserProfile() {
+            const res = await fetch('/user-profile')
+            if (res.status !== 200) {
+                return null;
+            }
+
+            return await res.json()
+        }
+    }
+
+    class UserProfile {
+        elements = {
+            displayName: document.querySelector("#display-name"),
+            image: document.querySelector("#user-image"),
+        }
+
+        async init() {
+            new LoadingDots('.user-profile-loading-dots');
+
+            const userProfile = await Api.getUserProfile();
+            if (!userProfile) {
+                return;
+            }
+
+            this.injectProfile(userProfile);
+        }
+
+        injectProfile(userProfile) {
+            this.elements.displayName.innerHTML = userProfile.display_name;
+
+            if (!userProfile.images.length) {
+                this.elements.image.style.display = 'none';
+                return
+            }
+            this.elements.image.src = userProfile.images[0].url;
+            this.elements.image.style.display = 'inline-block';
+        }
+    }
+
+    class App {
+        userProfile = undefined;
+
+        constructor() {
+            this.userProfile = new UserProfile();
+            this.userProfile.init();
+        }
+    }
+
+    new App();
 </script>
 
 {{ end }}
