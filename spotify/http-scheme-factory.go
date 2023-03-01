@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"net/url"
 	"os"
+	"strconv"
 )
 
 // Api wants the values as url params
@@ -21,7 +22,7 @@ func makeAccessTokenRequestParams(oauthCode string) *url.Values {
 	return &params
 }
 
-func parseAccessTokenResponse(r *http.Response) (*AccessToken, error) {
+func parseAccessTokenResponse(r *http.Response) (*AccessTokenResponse, error) {
 	body, _ := io.ReadAll(r.Body)
 
 	// Check for error response body
@@ -37,7 +38,7 @@ func parseAccessTokenResponse(r *http.Response) (*AccessToken, error) {
 		return nil, errors.New(fmt.Sprintf("response had error (%s): %s", r.Status, response))
 	}
 
-	var tokenRes AccessToken
+	var tokenRes AccessTokenResponse
 	err := json.Unmarshal(body, &tokenRes)
 	if err != nil {
 		return nil, fmt.Errorf("unmarshalling (access token): %w", err)
@@ -46,12 +47,12 @@ func parseAccessTokenResponse(r *http.Response) (*AccessToken, error) {
 	return &tokenRes, nil
 }
 
-func parseUserProfileResponse(r *http.Response) (*UserProfile, error) {
+func parseUserProfileResponse(r *http.Response) (*UserProfileResponse, error) {
 	fmt.Println("parseUserProfileResponse called")
 
 	fmt.Println(r.StatusCode)
 
-	var userProfile UserProfile
+	var userProfile UserProfileResponse
 
 	body, err := io.ReadAll(r.Body)
 	if err != nil {
@@ -74,7 +75,14 @@ func parseUserProfileResponse(r *http.Response) (*UserProfile, error) {
 	return &userProfile, nil
 }
 
-func parseUserPlaylistsResponse(r *http.Response) (*UserPlaylists, error) {
+func makeUserPlaylistRequestParams(limit int, offset int) (string, error) {
+	params := url.Values{}
+	params.Set("limit", strconv.Itoa(limit))
+	params.Set("offset", strconv.Itoa(offset))
+	return params.Encode(), nil
+}
+
+func parseUserPlaylistsResponse(r *http.Response) (*UserPlaylistsResponse, error) {
 	body, err := io.ReadAll(r.Body)
 	if err != nil {
 		return nil, fmt.Errorf("parsing response: %w", err)
@@ -88,7 +96,7 @@ func parseUserPlaylistsResponse(r *http.Response) (*UserPlaylists, error) {
 		return nil, err
 	}
 
-	var playlistsResponse UserPlaylists
+	var playlistsResponse UserPlaylistsResponse
 	err = json.Unmarshal(body, &playlistsResponse)
 	if err != nil {
 		return nil, fmt.Errorf("unmarshalling: %w", err)

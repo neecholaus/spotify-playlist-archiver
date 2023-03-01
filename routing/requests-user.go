@@ -22,7 +22,7 @@ func userProfile(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	userProfile, err := spotify.GetUserProfile(accessToken)
+	userProfile, err := spotify.GetUserProfileResponse(accessToken)
 	if err != nil {
 		fmt.Println(err)
 		w.WriteHeader(500)
@@ -54,7 +54,7 @@ func userPlaylistsHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	userPlaylists, err := spotify.GetUserPlaylists(accessToken)
+	userPlaylists, err := spotify.GetAllUserPlaylists(accessToken)
 	if err != nil {
 		fmt.Println(err)
 		w.WriteHeader(500)

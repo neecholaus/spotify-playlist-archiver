@@ -1,6 +1,6 @@
 package spotify
 
-type AccessToken struct {
+type AccessTokenResponse struct {
 	AccessToken  string `json:"access_token"`
 	TokenScope   string `json:"token_scope"`
 	Scope        string `json:"scope"`
@@ -8,26 +8,19 @@ type AccessToken struct {
 	RefreshToken string `json:"refresh_token"`
 }
 
-type UserProfile struct {
-	Id          string      `json:"id"`
-	DisplayName string      `json:"display_name"`
-	Images      []UserImage `json:"images"`
+type UserProfileResponse struct {
+	Id          string `json:"id"`
+	DisplayName string `json:"display_name"`
+	Images      []struct {
+		Url string `json:"url"`
+	} `json:"images"`
 }
 
-type UserImage struct {
-	Url string `json:"url"`
-}
-
-type UserPlaylists struct {
+type UserPlaylistsResponse struct {
 	Limit int            `json:"limit"`
 	Next  string         `json:"next"`
 	Total int            `json:"total"`
 	Items []UserPlaylist `json:"items"`
-}
-
-type UserPlaylist struct {
-	Id   string `json:"id"`
-	Name string `json:"name"`
 }
 
 type apiErrorResponse struct {

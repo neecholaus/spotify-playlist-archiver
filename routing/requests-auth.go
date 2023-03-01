@@ -44,7 +44,7 @@ func ingestOAuth(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	access, err := spotify.GetAccessToken(query.Code)
+	access, err := spotify.GetAccessTokenResponse(query.Code)
 	if err != nil {
 		fmt.Printf("get (access token): %s\n", err.Error())
 		http.Redirect(w, r, "/error", 302)

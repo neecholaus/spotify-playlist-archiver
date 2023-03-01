@@ -7,7 +7,7 @@ import (
 	"strings"
 )
 
-func GetAccessToken(oauthCode string) (*AccessToken, error) {
+func GetAccessTokenResponse(oauthCode string) (*AccessTokenResponse, error) {
 	params := makeAccessTokenRequestParams(oauthCode)
 
 	request, err := http.NewRequest(
@@ -37,8 +37,8 @@ func GetAccessToken(oauthCode string) (*AccessToken, error) {
 	return tokenResponse, nil
 }
 
-func GetUserProfile(accessToken string) (*UserProfile, error) {
-	fmt.Println("GetUserProfile called")
+func GetUserProfileResponse(accessToken string) (*UserProfileResponse, error) {
+	fmt.Println("GetUserProfileResponse called")
 
 	request, err := http.NewRequest(
 		"GET",
@@ -65,10 +65,42 @@ func GetUserProfile(accessToken string) (*UserProfile, error) {
 	return userProfile, nil
 }
 
-func GetUserPlaylists(accessToken string) (*UserPlaylists, error) {
+func GetAllUserPlaylists(accessToken string) (*UserPlaylists, error) {
+	playlists := UserPlaylists{}
+	offset := 0
+	limit := 5
+
+	for {
+		userPlaylistResponse, err := getUserPlaylistsResponse(accessToken, limit, offset)
+		if err != nil {
+			return nil, fmt.Errorf("get (all user playlists): %w", err)
+		}
+
+		offset += limit
+
+		for _, v := range userPlaylistResponse.Items {
+			playlists.Items = append(playlists.Items, v)
+		}
+
+		if userPlaylistResponse.Next == "" {
+			break
+		}
+	}
+
+	return &playlists, nil
+}
+
+func getUserPlaylistsResponse(accessToken string, limit int, offset int) (*UserPlaylistsResponse, error) {
 	fmt.Println("GetUserPlaylists called")
 
-	request, err := http.NewRequest("GET", "https://api.spotify.com/v1/me/playlists", nil)
+	requestQuery, err := makeUserPlaylistRequestParams(limit, offset)
+	if err != nil {
+		return nil, fmt.Errorf("building query: %w", err)
+	}
+
+	endpoint := "https://api.spotify.com/v1/me/playlists" + "?" + requestQuery
+
+	request, err := http.NewRequest("GET", endpoint, nil)
 	if err != nil {
 		return nil, fmt.Errorf("building request: %w", err)
 	}
