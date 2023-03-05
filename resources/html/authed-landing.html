@@ -1,13 +1,19 @@
 {{ define "content" }}
 
 <div class="p-3">
-    <span id="user-profile" class="flex py-1 pr-6 pl-3 items-center bg-green-100 text-green-700 rounded-lg">
-        <img id="user-image" alt="User Image" class="border border-2" style="display:none;" />
-        <span id="display-name" class="text-green-700">
-            Loading Profile
-            <span class="user-profile-loading-dots"></span>
+    <div class="flex justify-start">
+        <span id="user-profile" class="flex py-1 pr-6 pl-3 items-center bg-green-100 text-green-700 rounded-lg">
+            <img id="user-image" alt="User Image" class="border border-2" style="display:none;" />
+            <span id="display-name" class="text-green-700">
+                Loading Profile
+                <span class="user-profile-loading-dots"></span>
+            </span>
         </span>
-    </span>
+
+        <span id="exporter-controls">
+            <span id="export-count">0</span>
+        </span>
+    </div>
 
     <div id="playlists"></div>
 </div>
@@ -160,6 +166,10 @@
          * @type Playlists
          */
         playlistsManager = undefined;
+        /**
+         * @type PlaylistExportControlsManager
+         */
+        playlistsExportControlsManager = undefined;
 
         selected = {};
 
@@ -171,17 +181,45 @@
         }
 
         /**
+         * @param playlistExportControlsManager PlaylistExportControlsManager
+         */
+        setPlaylistExportControlsManager(playlistExportControlsManager) {
+            this.playlistsExportControlsManager = playlistExportControlsManager;
+        }
+
+        /**
          * @param playlistId string
          */
         toggleSelectedPlaylist(playlistId) {
             if (this.selected.hasOwnProperty(playlistId)) {
                 delete this.selected[playlistId];
                 this.playlistsManager.indicateNotSelectedPlaylist(playlistId);
+                this.playlistsExportControlsManager.updateCount(Object.keys(this.selected).length);
                 return;
             }
 
             this.selected[playlistId] = undefined;
             this.playlistsManager.indicateSelectedPlaylist(playlistId);
+            this.playlistsExportControlsManager.updateCount(Object.keys(this.selected).length);
+        }
+    }
+
+    class PlaylistExportControlsManager {
+        elements = {
+            container: undefined,
+            selectedCount: undefined,
+        }
+
+        constructor() {
+            this.elements.container = document.querySelector('#exporter-controls');
+            this.elements.selectedCount = this.elements.container.querySelector('#export-count');
+        }
+
+        /**
+         * @param count int
+         */
+        updateCount(count) {
+            this.elements.selectedCount.innerHTML = count;
         }
     }
 
@@ -198,6 +236,10 @@
          * @type PlaylistExporter
          */
         playlistExporter = undefined;
+        /**
+         * @type PlaylistExportControlsManager
+         */
+        playlistExportControlsManager = undefined;
 
         constructor() {
             this.playlistExporter = new PlaylistExporter();
@@ -205,8 +247,10 @@
             this.userProfile.init();
             this.playlists = new Playlists();
             this.playlists.init();
+            this.playlistExportControlsManager = new PlaylistExportControlsManager();
             this.playlists.setPlaylistExporter(this.playlistExporter);
             this.playlistExporter.setPlaylistManager(this.playlists);
+            this.playlistExporter.setPlaylistExportControlsManager(this.playlistExportControlsManager)
         }
     }
 

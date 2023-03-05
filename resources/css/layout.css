@@ -87,3 +87,22 @@ div#playlists .playlist-item.chosen-for-export {
         bg-green-100
         text-green-600
 }
+
+span#exporter-controls {
+    @apply
+        p-2
+        border
+        border-slate-200
+        bg-slate-100
+        text-slate-400
+        rounded-md
+        flex
+        justify-between
+        ml-2
+}
+span#exporter-controls #export-count {
+    @apply
+        bg-white
+        rounded-md
+        px-2
+}
