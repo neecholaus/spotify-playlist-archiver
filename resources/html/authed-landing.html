@@ -8,6 +8,8 @@
             <span class="user-profile-loading-dots"></span>
         </span>
     </span>
+
+    <div id="playlists"></div>
 </div>
 
 <style>
@@ -28,12 +30,21 @@
 <script>
     class Api {
         static async getUserProfile() {
-            const res = await fetch('/user-profile')
+            const res = await fetch('/user-profile');
             if (res.status !== 200) {
                 return null;
             }
 
             return await res.json()
+        }
+
+        static async getAllPlaylists() {
+            const res = await fetch('/playlists');
+            if (res.status !== 200) {
+                return null;
+            }
+
+            return await res.json();
         }
     }
 
@@ -66,12 +77,38 @@
         }
     }
 
+    class Playlists {
+        elements = {
+            listContainer: document.querySelector('div#playlists'),
+        }
+
+        async init() {
+            const playlists = await Api.getAllPlaylists();
+            if (! playlists) {
+                return;
+            }
+
+            this.injectPlaylists(playlists.items);
+        }
+
+        injectPlaylists(playlists) {
+            for (let playlist of playlists) {
+                const element = document.createElement('div');
+                element.innerHTML = `<span class="playlist-item">${playlist.name}</span>`;
+                this.elements.listContainer.appendChild(element);
+            }
+        }
+    }
+
     class App {
         userProfile = undefined;
+        playlists = undefined;
 
         constructor() {
             this.userProfile = new UserProfile();
             this.userProfile.init();
+            this.playlists = new Playlists();
+            this.playlists.init();
         }
     }
 
