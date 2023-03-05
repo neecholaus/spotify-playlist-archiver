@@ -77,5 +77,13 @@ div#playlists .playlist-item {
         text-slate-400
 
         hover:border-slate-300
-        hover:text-slate-800
+        hover:bg-slate-100
+        hover:text-slate-600
+}
+
+div#playlists .playlist-item.chosen-for-export {
+    @apply
+        border-green-300
+        bg-green-100
+        text-green-600
 }
