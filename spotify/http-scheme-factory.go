@@ -105,6 +105,28 @@ func parseUserPlaylistsResponse(r *http.Response) (*UserPlaylistsResponse, error
 	return &playlistsResponse, nil
 }
 
+func makePlaylistItemsRequest(playlistId string, limit int, offset int) string {
+	params := url.Values{}
+	params.Set("limit", strconv.Itoa(limit))
+	params.Set("offset", strconv.Itoa(offset))
+	return params.Encode()
+}
+
+func parsePlaylistItemsResponse(r *http.Response) (*PlaylistItemsResponse, error) {
+	body, err := io.ReadAll(r.Body)
+	if err != nil {
+		return nil, fmt.Errorf("reading response: %w", err)
+	}
+
+	var response PlaylistItemsResponse
+	err = json.Unmarshal(body, &response)
+	if err != nil {
+		return nil, fmt.Errorf("unmarshing response: %w", err)
+	}
+
+	return &response, nil
+}
+
 func parseApiErrorResponse(body []byte) (*apiErrorResponse, error) {
 	var response apiErrorResponse
 	err := json.Unmarshal(body, &response)

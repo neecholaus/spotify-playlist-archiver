@@ -91,7 +91,7 @@ func GetAllUserPlaylists(accessToken string) (*UserPlaylists, error) {
 }
 
 func getUserPlaylistsResponse(accessToken string, limit int, offset int) (*UserPlaylistsResponse, error) {
-	fmt.Println("GetUserPlaylists called")
+	fmt.Println("getting user playlists")
 
 	requestQuery, err := makeUserPlaylistRequestParams(limit, offset)
 	if err != nil {
@@ -119,4 +119,58 @@ func getUserPlaylistsResponse(accessToken string, limit int, offset int) (*UserP
 	}
 
 	return playlistsResponse, nil
+}
+
+func getPlaylistItemsResponse(accessToken string, playlistId string, limit int, offset int) (*PlaylistItemsResponse, error) {
+	fmt.Printf("getting playlist items (limit:%d) (offset:%d)", limit, offset)
+
+	requestQuery := makePlaylistItemsRequest(playlistId, limit, offset)
+	endpoint := fmt.Sprintf("https://api.spotify.com/v1/playlists/%s/tracks?%s", playlistId, requestQuery)
+
+	request, err := http.NewRequest("GET", endpoint, nil)
+	if err != nil {
+		return nil, fmt.Errorf("building request: %w", err)
+	}
+
+	request.Header.Set("Authorization", fmt.Sprintf("Bearer %s", accessToken))
+
+	client := http.Client{}
+	res, err := client.Do(request)
+	if err != nil {
+		return nil, fmt.Errorf("doing request: %w", err)
+	}
+
+	parsed, err := parsePlaylistItemsResponse(res)
+	if err != nil {
+		return nil, fmt.Errorf("parsing response: %w", err)
+	}
+
+	return parsed, nil
+}
+
+func GetAllPlaylistItems(accessToken string, playlistId string) (*PlaylistItems, error) {
+	fmt.Println("getting all playlist items")
+
+	playlistItems := PlaylistItems{}
+	offset := 0
+	limit := 50
+
+	for {
+		playlistItemsResponse, err := getPlaylistItemsResponse(accessToken, playlistId, limit, offset)
+		if err != nil {
+			return nil, fmt.Errorf("get (all playlist items): %w", err)
+		}
+
+		offset += limit
+
+		for _, v := range playlistItemsResponse.Items {
+			playlistItems.Items = append(playlistItems.Items, v)
+		}
+
+		if playlistItemsResponse.Next == "" {
+			break
+		}
+	}
+
+	return &playlistItems, nil
 }

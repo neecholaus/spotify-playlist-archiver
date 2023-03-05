@@ -2,7 +2,7 @@
 
 <div class="p-3">
     <div class="flex justify-start">
-        <span id="user-profile" class="flex py-1 pr-6 pl-3 items-center bg-green-100 text-green-700 rounded-lg">
+        <span id="user-profile" class="flex py-1 pr-6 pl-3 items-center bg-green-100 text-green-700 border border-green-200 rounded-lg">
             <img id="user-image" alt="User Image" class="border border-2" style="display:none;" />
             <span id="display-name" class="text-green-700">
                 Loading Profile
@@ -26,7 +26,7 @@
         border-radius: 100%;
         width: 2.1em;
         height: 2.1em;
-        border-color: rgba(0,0,0,0.13)
+        border-color: rgba(0,0,0,0.2);
     }
     span#display-name {
         margin-left: .9em;
@@ -50,6 +50,25 @@
 
         static async getAllPlaylists() {
             const res = await fetch('/playlists');
+            if (res.status !== 200) {
+                return null;
+            }
+
+            return await res.json();
+        }
+
+        /**
+         * @param playlistId string
+         */
+        static async getSongsInPlaylist(playlistId) {
+            const res = await fetch('/playlist/songs', {
+                method: 'POST',
+                headers: {
+                    'content-type': 'application/json',
+                },
+                body: JSON.stringify({playlistId}),
+            });
+
             if (res.status !== 200) {
                 return null;
             }

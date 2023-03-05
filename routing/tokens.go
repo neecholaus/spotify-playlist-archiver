@@ -1,6 +1,8 @@
 package routing
 
 import (
+	"errors"
+	"net/http"
 	"sync"
 )
 
@@ -24,4 +26,18 @@ func getToken(session string) string {
 		return ""
 	}
 	return token
+}
+
+func getTokenForRequest(r *http.Request) (string, error) {
+	cookie, err := r.Cookie("session")
+	if err != nil {
+		return "", errors.New("no session cookie")
+	}
+
+	accessToken := getToken(cookie.Value)
+	if accessToken == "" {
+		return "", errors.New("no token for cookie")
+	}
+
+	return accessToken, nil
 }

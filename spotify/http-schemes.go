@@ -23,6 +23,13 @@ type UserPlaylistsResponse struct {
 	Items []UserPlaylist `json:"items"`
 }
 
+type PlaylistItemsResponse struct {
+	Limit int            `json:"limit"`
+	Next  string         `json:"next"`
+	Total int            `json:"total"`
+	Items []PlaylistItem `json:"items"`
+}
+
 type apiErrorResponse struct {
 	Error struct {
 		Status  int    `json:"status"`
