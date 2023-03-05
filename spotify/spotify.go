@@ -68,7 +68,7 @@ func GetUserProfileResponse(accessToken string) (*UserProfileResponse, error) {
 func GetAllUserPlaylists(accessToken string) (*UserPlaylists, error) {
 	playlists := UserPlaylists{}
 	offset := 0
-	limit := 5
+	limit := 50
 
 	for {
 		userPlaylistResponse, err := getUserPlaylistsResponse(accessToken, limit, offset)

@@ -65,3 +65,17 @@
         hover:text-blue-600
         hover:underline
 }
+
+div#playlists .playlist-item {
+    @apply
+        border
+        border-slate-100
+        px-2
+        py-1
+        my-1
+        rounded-sm
+        text-slate-400
+
+        hover:border-slate-300
+        hover:text-slate-800
+}

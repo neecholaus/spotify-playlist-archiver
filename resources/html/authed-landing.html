@@ -25,6 +25,10 @@
     span#display-name {
         margin-left: .9em;
     }
+
+    div#playlists {
+        padding: 10px 0;
+    }
 </style>
 
 <script>
@@ -94,7 +98,9 @@
         injectPlaylists(playlists) {
             for (let playlist of playlists) {
                 const element = document.createElement('div');
-                element.innerHTML = `<span class="playlist-item">${playlist.name}</span>`;
+                element.classList.add('playlist-item');
+                element.setAttribute('data-playlist-id', playlist.id);
+                element.innerHTML = playlist.name;
                 this.elements.listContainer.appendChild(element);
             }
         }
