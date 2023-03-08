@@ -12,6 +12,7 @@
 
         <span id="exporter-controls">
             <span id="export-count">0</span>
+            <a href="#" id="export-submit-btn" class="ml-3 mr-2">Export</a>
         </span>
     </div>
 
@@ -178,6 +179,13 @@
         getPlaylistItemById(playlistId) {
             return this.elements.listContainer.querySelector(`.playlist-item[data-playlist-id="${playlistId}"]`)
         }
+
+        /**
+         * @returns {NodeListOf<Element>}
+         */
+        getSelectedPlaylistItems() {
+            return this.elements.listContainer.querySelectorAll('.playlist-item.chosen-for-export');
+        }
     }
 
     class PlaylistExporter {
@@ -221,17 +229,49 @@
             this.playlistsManager.indicateSelectedPlaylist(playlistId);
             this.playlistsExportControlsManager.updateCount(Object.keys(this.selected).length);
         }
+
+        /**
+         * @return []string
+         */
+        getIdsOfAllSelectedPlaylists() {
+            const playlistItemElements = this.playlistsManager.getSelectedPlaylistItems();
+            const ids = [];
+
+            playlistItemElements.forEach(item => {
+                ids.push(item.getAttribute('data-playlist-id'));
+            });
+
+            return ids;
+        }
     }
 
     class PlaylistExportControlsManager {
+        /**
+         * @type PlaylistExporter
+         */
+        playlistExporter = undefined;
+
         elements = {
             container: undefined,
             selectedCount: undefined,
+            exportSubmitBtn: undefined,
         }
 
         constructor() {
             this.elements.container = document.querySelector('#exporter-controls');
             this.elements.selectedCount = this.elements.container.querySelector('#export-count');
+            this.elements.exportSubmitBtn = this.elements.container.querySelector('#export-submit-btn');
+
+            this.elements.exportSubmitBtn.addEventListener('click', e => {
+                this.handleSubmitExportClick(e)
+            });
+        }
+
+        /**
+         * @param exporter PlaylistExporter
+         */
+        setPlaylistExporter(exporter) {
+            this.playlistExporter = exporter;
         }
 
         /**
@@ -239,6 +279,10 @@
          */
         updateCount(count) {
             this.elements.selectedCount.innerHTML = count;
+        }
+
+        handleSubmitExportClick(e) {
+            console.log(this.playlistExporter.getIdsOfAllSelectedPlaylists());
         }
     }
 
@@ -267,6 +311,7 @@
             this.playlists = new Playlists();
             this.playlists.init();
             this.playlistExportControlsManager = new PlaylistExportControlsManager();
+            this.playlistExportControlsManager.setPlaylistExporter(this.playlistExporter);
             this.playlists.setPlaylistExporter(this.playlistExporter);
             this.playlistExporter.setPlaylistManager(this.playlists);
             this.playlistExporter.setPlaylistExportControlsManager(this.playlistExportControlsManager)
