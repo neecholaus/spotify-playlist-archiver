@@ -12,7 +12,7 @@
 
         <span id="exporter-controls">
             <span id="export-count">0</span>
-            <a href="#" id="export-submit-btn" class="ml-3 mr-2">Export</a>
+            <a href="#" id="prepare-btn" class="ml-3 mr-2">Prepare</a>
         </span>
     </div>
 
@@ -61,7 +61,7 @@
         /**
          * @param playlistId string
          */
-        static async getSongsInPlaylist(playlistId) {
+        static async getTracksInPlaylist(playlistId) {
             let endpoint = '/playlist/tracks';
 
             endpoint += `?playlistId=${playlistId}`;
@@ -204,6 +204,8 @@
 
         selected = {};
 
+        preparedExports = {};
+
         /**
          * @param playlistsManager Playlists
          */
@@ -247,6 +249,24 @@
 
             return ids;
         }
+
+        /**
+         * @param playlistIds []string
+         */
+        async prepareExports(playlistIds) {
+            await this.#loadTracksForEachPlaylist(playlistIds);
+        }
+
+        /**
+         * @param playlistIds []string
+         */
+        async #loadTracksForEachPlaylist(playlistIds) {
+            for (let id of playlistIds) {
+                const tracks = await Api.getTracksInPlaylist(id);
+
+                this.preparedExports[id] = tracks;
+            }
+        }
     }
 
     class PlaylistExportControlsManager {
@@ -258,16 +278,16 @@
         elements = {
             container: undefined,
             selectedCount: undefined,
-            exportSubmitBtn: undefined,
+            prepareBtn: undefined,
         }
 
         constructor() {
             this.elements.container = document.querySelector('#exporter-controls');
             this.elements.selectedCount = this.elements.container.querySelector('#export-count');
-            this.elements.exportSubmitBtn = this.elements.container.querySelector('#export-submit-btn');
+            this.elements.prepareBtn = this.elements.container.querySelector('#prepare-btn');
 
-            this.elements.exportSubmitBtn.addEventListener('click', e => {
-                this.handleSubmitExportClick(e)
+            this.elements.prepareBtn.addEventListener('click', e => {
+                this.handlePrepareClick(e)
             });
         }
 
@@ -285,14 +305,9 @@
             this.elements.selectedCount.innerHTML = count;
         }
 
-        async handleSubmitExportClick(e) {
+        handlePrepareClick(e) {
             const playlistIds = this.playlistExporter.getIdsOfAllSelectedPlaylists();
-
-            for (let id of playlistIds) {
-                const songs = await Api.getSongsInPlaylist(id);
-
-                console.log(songs);
-            }
+            this.playlistExporter.prepareExports(playlistIds);
         }
     }
 
