@@ -1,19 +1,20 @@
 package spotify
 
 type UserPlaylists struct {
-	Items []UserPlaylist `json:"items"`
+	Items []Playlist `json:"items"`
 }
 
-type UserPlaylist struct {
+type Playlist struct {
 	Id   string `json:"id"`
 	Name string `json:"name"`
 }
 
-type PlaylistItems struct {
-	Items []PlaylistItem `json:"items"`
+type PlaylistTracks struct {
+	Id    string          `json:"id"`
+	Items []PlaylistTrack `json:"items"`
 }
 
-type PlaylistItem struct {
+type PlaylistTrack struct {
 	AddedAt string `json:"added_at"`
 	Track   struct {
 		Name    string `json:"name"`

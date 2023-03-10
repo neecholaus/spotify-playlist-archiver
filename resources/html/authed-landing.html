@@ -62,7 +62,11 @@
          * @param playlistId string
          */
         static async getSongsInPlaylist(playlistId) {
-            const res = await fetch('/playlist/songs', {
+            let endpoint = '/playlist/tracks';
+
+            endpoint += `?playlistId=${playlistId}`;
+
+            const res = await fetch(endpoint, {
                 method: 'POST',
                 headers: {
                     'content-type': 'application/json',
@@ -281,8 +285,14 @@
             this.elements.selectedCount.innerHTML = count;
         }
 
-        handleSubmitExportClick(e) {
-            console.log(this.playlistExporter.getIdsOfAllSelectedPlaylists());
+        async handleSubmitExportClick(e) {
+            const playlistIds = this.playlistExporter.getIdsOfAllSelectedPlaylists();
+
+            for (let id of playlistIds) {
+                const songs = await Api.getSongsInPlaylist(id);
+
+                console.log(songs);
+            }
         }
     }
 

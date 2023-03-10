@@ -71,7 +71,7 @@ func userPlaylistsHandler(w http.ResponseWriter, r *http.Request) {
 	_, _ = w.Write(marshalledUserPlaylists)
 }
 
-func playlistItemsHandler(w http.ResponseWriter, r *http.Request) {
+func playlistTracksHandler(w http.ResponseWriter, r *http.Request) {
 	accessToken, err := getTokenForRequest(r)
 	if err != nil {
 		fmt.Printf("getting access token: %s\n", err)
@@ -86,14 +86,14 @@ func playlistItemsHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	playlistItems, err := spotify.GetAllPlaylistItems(accessToken, requestScheme.PlaylistId)
+	playlist, err := spotify.GetPlaylistWithAllItems(accessToken, requestScheme.PlaylistId)
 	if err != nil {
 		fmt.Printf("getting playlist items: %s\n", err)
 		w.WriteHeader(500)
 		return
 	}
 
-	marshalled, err := json.Marshal(playlistItems)
+	marshalled, err := json.Marshal(playlist)
 	if err != nil {
 		fmt.Println(err)
 		w.WriteHeader(500)

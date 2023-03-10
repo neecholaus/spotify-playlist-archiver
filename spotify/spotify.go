@@ -122,7 +122,7 @@ func getUserPlaylistsResponse(accessToken string, limit int, offset int) (*UserP
 }
 
 func getPlaylistItemsResponse(accessToken string, playlistId string, limit int, offset int) (*PlaylistItemsResponse, error) {
-	fmt.Printf("getting playlist items (limit:%d) (offset:%d)", limit, offset)
+	fmt.Printf("getting playlist items (limit:%d) (offset:%d)\n", limit, offset)
 
 	requestQuery := makePlaylistItemsRequest(playlistId, limit, offset)
 	endpoint := fmt.Sprintf("https://api.spotify.com/v1/playlists/%s/tracks?%s", playlistId, requestQuery)
@@ -148,23 +148,25 @@ func getPlaylistItemsResponse(accessToken string, playlistId string, limit int, 
 	return parsed, nil
 }
 
-func GetAllPlaylistItems(accessToken string, playlistId string) (*PlaylistItems, error) {
-	fmt.Println("getting all playlist items")
+func GetPlaylistWithAllItems(accessToken string, playlistId string) (*PlaylistTracks, error) {
+	fmt.Println("getting all playlistTracks items")
 
-	playlistItems := PlaylistItems{}
+	playlistTracks := PlaylistTracks{
+		Id: playlistId,
+	}
 	offset := 0
 	limit := 50
 
 	for {
 		playlistItemsResponse, err := getPlaylistItemsResponse(accessToken, playlistId, limit, offset)
 		if err != nil {
-			return nil, fmt.Errorf("get (all playlist items): %w", err)
+			return nil, fmt.Errorf("get (all playlistTracks items): %w", err)
 		}
 
 		offset += limit
 
 		for _, v := range playlistItemsResponse.Items {
-			playlistItems.Items = append(playlistItems.Items, v)
+			playlistTracks.Items = append(playlistTracks.Items, v)
 		}
 
 		if playlistItemsResponse.Next == "" {
@@ -172,5 +174,5 @@ func GetAllPlaylistItems(accessToken string, playlistId string) (*PlaylistItems,
 		}
 	}
 
-	return &playlistItems, nil
+	return &playlistTracks, nil
 }

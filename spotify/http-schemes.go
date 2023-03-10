@@ -17,17 +17,17 @@ type UserProfileResponse struct {
 }
 
 type UserPlaylistsResponse struct {
-	Limit int            `json:"limit"`
-	Next  string         `json:"next"`
-	Total int            `json:"total"`
-	Items []UserPlaylist `json:"items"`
+	Limit int        `json:"limit"`
+	Next  string     `json:"next"`
+	Total int        `json:"total"`
+	Items []Playlist `json:"items"`
 }
 
 type PlaylistItemsResponse struct {
-	Limit int            `json:"limit"`
-	Next  string         `json:"next"`
-	Total int            `json:"total"`
-	Items []PlaylistItem `json:"items"`
+	Limit int             `json:"limit"`
+	Next  string          `json:"next"`
+	Total int             `json:"total"`
+	Items []PlaylistTrack `json:"items"`
 }
 
 type apiErrorResponse struct {

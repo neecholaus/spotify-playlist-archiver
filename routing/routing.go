@@ -28,6 +28,6 @@ func registerRoutes(router *mux.Router) {
 	authRouter.HandleFunc("/authed", authedLanding)
 	authRouter.HandleFunc("/user-profile", userProfile)
 	authRouter.HandleFunc("/playlists", userPlaylistsHandler)
-	authRouter.HandleFunc("/playlist/tracks", playlistItemsHandler)
+	authRouter.HandleFunc("/playlist/tracks", playlistTracksHandler)
 	authRouter.HandleFunc("/logout", logout)
 }
