@@ -142,13 +142,25 @@
          */
         injectPlaylists(playlists) {
             for (let playlist of playlists) {
-                const element = document.createElement('div');
-                element.classList.add('playlist-item');
-                element.setAttribute('data-playlist-id', playlist.id);
-                element.innerHTML = playlist.name;
+                const element = this.createPlaylistElement(playlist)
                 this.elements.listContainer.appendChild(element);
                 element.addEventListener('click', e => {this.handlePlaylistClick(e)});
             }
+        }
+
+        /**
+         * @param playlist object
+         * @returns {HTMLDivElement}
+         */
+        createPlaylistElement(playlist) {
+            const element = document.createElement('div');
+            element.classList.add('playlist-item');
+            element.setAttribute('data-playlist-id', playlist.id);
+            element.innerHTML = `
+            <span>${playlist.name}</span>
+            <a href="#" class="download-btn">Download</a>
+            `;
+            return element;
         }
 
         handlePlaylistClick(e) {
@@ -187,8 +199,28 @@
         /**
          * @returns {NodeListOf<Element>}
          */
+        getAllPlaylistItems() {
+            return this.elements.listContainer.querySelectorAll('.playlist-item');
+        }
+
+        /**
+         * @returns {NodeListOf<Element>}
+         */
         getSelectedPlaylistItems() {
             return this.elements.listContainer.querySelectorAll('.playlist-item.chosen-for-export');
+        }
+
+        removePreparedIndicationFromAll() {
+            this.getAllPlaylistItems().forEach(el => {
+                el.classList.remove('ready-for-download');
+            });
+        }
+
+        /**
+         * @param playlistId string
+         */
+        indicatePrepared(playlistId) {
+            this.getPlaylistItemById(playlistId).classList.add('ready-for-download');
         }
     }
 
@@ -254,6 +286,8 @@
          * @param playlistIds []string
          */
         async prepareExports(playlistIds) {
+            this.preparedExports = {};
+            this.playlistsManager.removePreparedIndicationFromAll();
             await this.#loadTracksForEachPlaylist(playlistIds);
         }
 
@@ -265,6 +299,8 @@
                 const tracks = await Api.getTracksInPlaylist(id);
 
                 this.preparedExports[id] = tracks;
+
+                this.playlistsManager.indicatePrepared(id);
             }
         }
     }
