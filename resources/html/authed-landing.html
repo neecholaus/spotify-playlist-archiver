@@ -9,11 +9,6 @@
                 <span class="user-profile-loading-dots"></span>
             </span>
         </span>
-
-        <span id="exporter-controls">
-            <span id="export-count">0</span>
-            <a href="#" id="prepare-btn" class="ml-3 mr-2">Prepare</a>
-        </span>
     </div>
 
     <div id="playlists"></div>
@@ -229,10 +224,6 @@
          * @type Playlists
          */
         playlistsManager = undefined;
-        /**
-         * @type PlaylistExportControlsManager
-         */
-        playlistsExportControlsManager = undefined;
 
         selected = {};
 
@@ -246,26 +237,18 @@
         }
 
         /**
-         * @param playlistExportControlsManager PlaylistExportControlsManager
-         */
-        setPlaylistExportControlsManager(playlistExportControlsManager) {
-            this.playlistsExportControlsManager = playlistExportControlsManager;
-        }
-
-        /**
          * @param playlistId string
          */
         toggleSelectedPlaylist(playlistId) {
             if (this.selected.hasOwnProperty(playlistId)) {
                 delete this.selected[playlistId];
                 this.playlistsManager.indicateNotSelectedPlaylist(playlistId);
-                this.playlistsExportControlsManager.updateCount(Object.keys(this.selected).length);
                 return;
             }
 
             this.selected[playlistId] = undefined;
             this.playlistsManager.indicateSelectedPlaylist(playlistId);
-            this.playlistsExportControlsManager.updateCount(Object.keys(this.selected).length);
+            this.#loadTracksForEachPlaylist([playlistId]);
         }
 
         /**
@@ -305,48 +288,6 @@
         }
     }
 
-    class PlaylistExportControlsManager {
-        /**
-         * @type PlaylistExporter
-         */
-        playlistExporter = undefined;
-
-        elements = {
-            container: undefined,
-            selectedCount: undefined,
-            prepareBtn: undefined,
-        }
-
-        constructor() {
-            this.elements.container = document.querySelector('#exporter-controls');
-            this.elements.selectedCount = this.elements.container.querySelector('#export-count');
-            this.elements.prepareBtn = this.elements.container.querySelector('#prepare-btn');
-
-            this.elements.prepareBtn.addEventListener('click', e => {
-                this.handlePrepareClick(e)
-            });
-        }
-
-        /**
-         * @param exporter PlaylistExporter
-         */
-        setPlaylistExporter(exporter) {
-            this.playlistExporter = exporter;
-        }
-
-        /**
-         * @param count int
-         */
-        updateCount(count) {
-            this.elements.selectedCount.innerHTML = count;
-        }
-
-        handlePrepareClick(e) {
-            const playlistIds = this.playlistExporter.getIdsOfAllSelectedPlaylists();
-            this.playlistExporter.prepareExports(playlistIds);
-        }
-    }
-
     class PageManager {
         /**
          * @type UserProfile
@@ -360,10 +301,6 @@
          * @type PlaylistExporter
          */
         playlistExporter = undefined;
-        /**
-         * @type PlaylistExportControlsManager
-         */
-        playlistExportControlsManager = undefined;
 
         constructor() {
             this.playlistExporter = new PlaylistExporter();
@@ -371,11 +308,8 @@
             this.userProfile.init();
             this.playlists = new Playlists();
             this.playlists.init();
-            this.playlistExportControlsManager = new PlaylistExportControlsManager();
-            this.playlistExportControlsManager.setPlaylistExporter(this.playlistExporter);
             this.playlists.setPlaylistExporter(this.playlistExporter);
             this.playlistExporter.setPlaylistManager(this.playlists);
-            this.playlistExporter.setPlaylistExportControlsManager(this.playlistExportControlsManager)
         }
     }
 
