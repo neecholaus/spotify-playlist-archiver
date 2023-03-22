@@ -140,6 +140,12 @@
                 const element = this.createPlaylistElement(playlist)
                 this.elements.listContainer.appendChild(element);
                 element.addEventListener('click', e => {this.handlePlaylistClick(e)});
+                element.querySelector('.download-btn').addEventListener('click', e => {
+                    e.stopPropagation();
+                    const ct = e.currentTarget;
+                    const playlistId = ct.getAttribute('data-playlist-id');
+                    console.log(this.playlistExporter.preparedExports[playlistId]);
+                });
             }
         }
 
@@ -153,7 +159,7 @@
             element.setAttribute('data-playlist-id', playlist.id);
             element.innerHTML = `
             <span>${playlist.name}</span>
-            <a href="#" class="download-btn">Download</a>
+            <a href="#" class="download-btn" data-playlist-id="${playlist.id}">Download</a>
             `;
             return element;
         }
@@ -249,29 +255,6 @@
             this.selected[playlistId] = undefined;
             this.playlistsManager.indicateSelectedPlaylist(playlistId);
             this.#loadTracksForEachPlaylist([playlistId]);
-        }
-
-        /**
-         * @return []string
-         */
-        getIdsOfAllSelectedPlaylists() {
-            const playlistItemElements = this.playlistsManager.getSelectedPlaylistItems();
-            const ids = [];
-
-            playlistItemElements.forEach(item => {
-                ids.push(item.getAttribute('data-playlist-id'));
-            });
-
-            return ids;
-        }
-
-        /**
-         * @param playlistIds []string
-         */
-        async prepareExports(playlistIds) {
-            this.preparedExports = {};
-            this.playlistsManager.removePreparedIndicationFromAll();
-            await this.#loadTracksForEachPlaylist(playlistIds);
         }
 
         /**
