@@ -144,7 +144,7 @@
                     e.stopPropagation();
                     const ct = e.currentTarget;
                     const playlistId = ct.getAttribute('data-playlist-id');
-                    console.log(this.playlistExporter.preparedExports[playlistId]);
+                    this.#downloadPlaylistTracks(playlistId);
                 });
             }
         }
@@ -222,6 +222,13 @@
          */
         indicatePrepared(playlistId) {
             this.getPlaylistItemById(playlistId).classList.add('ready-for-download');
+        }
+
+        #downloadPlaylistTracks(playlistId) {
+            // todo - make blob and download
+            const playlist = this.playlistExporter.preparedExports[playlistId];
+
+            console.log(playlist);
         }
     }
 
