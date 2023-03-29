@@ -1,8 +1,11 @@
 package routing
 
 import (
-	"github.com/gorilla/mux"
+	"crypto/rand"
+	"math/big"
 	"net/http"
+
+	"github.com/gorilla/mux"
 )
 
 func Register(router *mux.Router) {
@@ -30,4 +33,19 @@ func registerRoutes(router *mux.Router) {
 	authRouter.HandleFunc("/playlists", userPlaylistsHandler)
 	authRouter.HandleFunc("/playlist/tracks", playlistTracksHandler)
 	authRouter.HandleFunc("/logout", logout)
+}
+
+func createRandomSessionString(desiredLength int) string {
+	charset := "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+	charsetLength := big.NewInt(int64(len(charset)))
+	var text string
+	for i := 0; i < desiredLength; i++ {
+		randIndex, err := rand.Int(rand.Reader, charsetLength)
+		if err != nil {
+			panic("could not generate random Int")
+		}
+		text += string(charset[randIndex.Int64()])
+	}
+
+	return text
 }

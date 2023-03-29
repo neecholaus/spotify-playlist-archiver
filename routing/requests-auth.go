@@ -51,8 +51,7 @@ func ingestOAuth(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// todo - need dynamic session
-	session := "test"
+	session := createRandomSessionString(20)
 	setToken(session, access.AccessToken)
 
 	http.SetCookie(w, &http.Cookie{
