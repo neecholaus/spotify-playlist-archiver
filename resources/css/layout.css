@@ -12,12 +12,11 @@
     @apply
         rounded-t-sm
         mt-5
-        pt-12
-        px-5
-        pb-5
+        p-3
+        py-4
         border
         border-slate-200
-        border-b-2
+        border-b
         border-b-slate-200
         bg-slate-100
 }
@@ -27,7 +26,7 @@
         p-3
         border-x
         border-slate-200
-        border-b-2
+        border-b
 }
 
 #app-nav a.nav-btn {
@@ -52,11 +51,12 @@
         border
         border-slate-200
         border-t
-        border-t-2
+        border-t
         p-2.5
         text-slate-500
         rounded-b-sm
         text-right
+        mb-5
 }
 
 #app a {

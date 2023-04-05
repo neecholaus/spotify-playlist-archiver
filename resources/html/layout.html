@@ -6,11 +6,15 @@
         <link rel="stylesheet" href="/public/css/inline-styles.css" />
         <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, minimum-scale=1.0">
         <script src="/public/js/bundled.js"></script>
+        <link rel="icon" type="image/x-icon" href="/public/images/favicon.ico">
     </head>
     <body>
         <div id="app">
             <div id="app-hero">
-                <p class="text-3xl font-bold text-slate-600">Playlist Archiver</p>
+                <p class="text-xl font-bold text-slate-600">
+                    <img src="/public/images/spotify-icon.png" class="inline-block mr-3 ml-2" style="width: 1.75em;" />
+                    Spotify Playlist Archiver
+                </p>
             </div>
             <div id="app-nav">
                 {{block "nav" .}} {{end}}
