@@ -1,16 +1,18 @@
-{{ define "content" }}
-
-<div class="p-3">
-    <div class="flex justify-start">
-        <span id="user-profile" class="flex py-1 pr-6 pl-3 items-center bg-green-100 text-green-700">
+{{ define "user" }}
+    <span class="inline-block">
+        <span id="user-profile" class="flex py-1 pr-6 pl-3 items-center bg-blue-200 text-blue-900">
             <img id="user-image" alt="User Image" style="display:none;" />
-            <span id="display-name" class="text-green-700">
+            <span id="display-name">
                 Loading Profile
                 <span class="user-profile-loading-dots"></span>
             </span>
         </span>
-    </div>
+    </span>
+{{ end }}
 
+{{ define "content" }}
+
+<div class="p-3">
     <div id="playlists"></div>
 </div>
 
@@ -25,10 +27,6 @@
     }
     span#display-name {
         margin-left: .9em;
-    }
-
-    div#playlists {
-        padding: 10px 0;
     }
 </style>
 
