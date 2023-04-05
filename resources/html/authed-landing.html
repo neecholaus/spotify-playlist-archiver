@@ -144,7 +144,8 @@
                     e.stopPropagation();
                     const ct = e.currentTarget;
                     const playlistId = ct.getAttribute('data-playlist-id');
-                    this.#downloadPlaylistTracks(playlistId);
+                    const playlistName = ct.getAttribute('data-playlist-name');
+                    this.#downloadPlaylistTracks(playlistId, playlistName);
                 });
             }
         }
@@ -159,7 +160,7 @@
             element.setAttribute('data-playlist-id', playlist.id);
             element.innerHTML = `
             <span>${playlist.name}</span>
-            <a href="#" class="download-btn" data-playlist-id="${playlist.id}">Download</a>
+            <a href="#" class="download-btn" data-playlist-id="${playlist.id}" data-playlist-name="${playlist.name}">Download</a>
             `;
             return element;
         }
@@ -198,37 +199,45 @@
         }
 
         /**
-         * @returns {NodeListOf<Element>}
-         */
-        getAllPlaylistItems() {
-            return this.elements.listContainer.querySelectorAll('.playlist-item');
-        }
-
-        /**
-         * @returns {NodeListOf<Element>}
-         */
-        getSelectedPlaylistItems() {
-            return this.elements.listContainer.querySelectorAll('.playlist-item.chosen-for-export');
-        }
-
-        removePreparedIndicationFromAll() {
-            this.getAllPlaylistItems().forEach(el => {
-                el.classList.remove('ready-for-download');
-            });
-        }
-
-        /**
          * @param playlistId string
          */
         indicatePrepared(playlistId) {
             this.getPlaylistItemById(playlistId).classList.add('ready-for-download');
         }
 
-        #downloadPlaylistTracks(playlistId) {
-            // todo - make blob and download
+        /**
+         * @param playlistId int
+         * @param playlistName string
+         */
+        #downloadPlaylistTracks(playlistId, playlistName) {
             const playlist = this.playlistExporter.preparedExports[playlistId];
 
-            console.log(playlist);
+            const blob = this.#createPlaylistWithTracksBlob(playlistName, playlist.items);
+            const a = document.createElement('a');
+            a.download = playlistName;
+            a.href = URL.createObjectURL(blob);
+            a.click();
+            URL.revokeObjectURL(a.href);
+        }
+
+        /**
+         * @param playlistName string
+         * @param tracks array
+         * @returns {Blob}
+         */
+        #createPlaylistWithTracksBlob(playlistName, tracks) {
+            const commaHex = '%2c';
+            const formattedTracks = tracks.map(track => {
+                return [
+                    `${track.Track.name.replaceAll(',', commaHex)}`,
+                    `${track.Track.Artists[0].name.replaceAll(',', commaHex)}`,
+                    `${track.Track.Album.name.replaceAll(',', commaHex)}`,
+                    `${track.added_at}`
+                ].join(',');
+            }).join('\n');
+            return new Blob(['Track, Artist, Album, Added\n', formattedTracks], {
+                type: 'text/csv',
+            });
         }
     }
 
