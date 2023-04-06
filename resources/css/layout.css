@@ -1,0 +1,110 @@
+#app {
+    font-family: Arial, sans-serif;
+
+    @apply
+        mx-auto
+        max-w-5xl
+        shadow-xl
+        rounded-b-sm
+}
+
+#app #app-hero {
+    @apply
+        rounded-t-sm
+        mt-5
+        p-3
+        py-4
+        border
+        border-slate-200
+        border-b
+        border-b-slate-200
+        bg-slate-100
+}
+
+#app-nav {
+    @apply
+        p-2
+        flex
+        border-x
+        border-slate-200
+        border-b
+}
+
+#app-nav a.nav-btn {
+    @apply
+        text-slate-400
+        rounded-sm
+        py-2
+        px-4
+        hover:bg-slate-100
+        hover:text-slate-500
+}
+
+#app-content {
+    @apply
+        flex-grow
+        border-x
+        border-slate-200
+}
+
+#app-footer {
+    @apply
+        border
+        border-slate-200
+        border-t
+        border-t
+        p-2.5
+        text-slate-500
+        rounded-b-sm
+        text-right
+        mb-5
+}
+
+#app a {
+    @apply
+        text-blue-500
+        hover:text-blue-600
+        hover:underline
+}
+
+div#playlists .playlist-item {
+    @apply
+        border
+        border-slate-100
+        px-2
+        py-1
+        my-1
+        rounded-sm
+        text-slate-400
+        cursor-pointer
+        flex
+        justify-between
+
+        hover:border-slate-300
+        hover:bg-slate-100
+        hover:text-slate-600
+}
+
+div#playlists .playlist-item.chosen-for-export {
+    @apply
+        border-blue-200
+        bg-blue-100
+        text-blue-600
+}
+
+div#playlists .playlist-item.chosen-for-export:not(.ready-for-download) .playlist-loading-dots {
+    display: inline-block;
+}
+
+div#playlists .playlist-item .playlist-loading-dots {
+    display: none;
+    min-width: 1em;
+    text-align: left;
+}
+
+div#playlists .playlist-item:not(.ready-for-download) .download-btn {
+    display: none;
+}
+div#playlists .playlist-item .download-btn {
+    font-size: .9em;
+}

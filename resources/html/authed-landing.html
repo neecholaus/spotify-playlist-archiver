@@ -1,0 +1,314 @@
+{{ define "user" }}
+    <span class="inline-block">
+        <span id="user-profile" class="flex py-1 pr-6 pl-3 items-center bg-blue-200 text-blue-900">
+            <img id="user-image" alt="User Image" style="opacity:0;" />
+            <span id="display-name">
+                Loading Profile
+                <span class="user-profile-loading-dots"></span>
+            </span>
+        </span>
+    </span>
+{{ end }}
+
+{{ define "content" }}
+
+<div class="p-3">
+    <div id="playlists"></div>
+</div>
+
+<style>
+    span#user-profile {
+        max-width: fit-content;
+    }
+    img#user-image {
+        border-radius: 100%;
+        width: 2em;
+        height: 2em;
+    }
+    span#display-name {
+        margin-left: .9em;
+    }
+</style>
+
+<script>
+    class Api {
+        static async getUserProfile() {
+            const res = await fetch('/user-profile');
+            if (res.status !== 200) {
+                return null;
+            }
+
+            return await res.json()
+        }
+
+        static async getAllPlaylists() {
+            const res = await fetch('/playlists');
+            if (res.status !== 200) {
+                return null;
+            }
+
+            return await res.json();
+        }
+
+        /**
+         * @param playlistId string
+         */
+        static async getTracksInPlaylist(playlistId) {
+            let endpoint = '/playlist/tracks';
+
+            endpoint += `?playlistId=${playlistId}`;
+
+            const res = await fetch(endpoint, {
+                method: 'POST',
+                headers: {
+                    'content-type': 'application/json',
+                },
+                body: JSON.stringify({playlistId}),
+            });
+
+            if (res.status !== 200) {
+                return null;
+            }
+
+            return await res.json();
+        }
+    }
+
+    class UserProfile {
+        elements = {
+            displayName: document.querySelector("#display-name"),
+            image: document.querySelector("#user-image"),
+        }
+
+        async init() {
+            new LoadingDots('.user-profile-loading-dots');
+
+            const userProfile = await Api.getUserProfile();
+            if (!userProfile) {
+                return;
+            }
+
+            this.injectProfile(userProfile);
+        }
+
+        injectProfile(userProfile) {
+            this.elements.displayName.innerHTML = userProfile.display_name;
+
+            if (!userProfile.images.length) {
+                this.elements.image.style.opacity = '1';
+                return
+            }
+            this.elements.image.src = userProfile.images[0].url;
+            this.elements.image.style.opacity = '1';
+        }
+    }
+
+    class Playlists {
+        /**
+         * @type PlaylistExporter
+         */
+        playlistExporter = undefined;
+
+        elements = {
+            listContainer: document.querySelector('div#playlists'),
+        }
+
+        /**
+         * @param playlistExporter PlaylistExporter
+         */
+        setPlaylistExporter(playlistExporter) {
+            this.playlistExporter = playlistExporter;
+        }
+
+        async init() {
+            const playlists = await Api.getAllPlaylists();
+            if (! playlists) {
+                return;
+            }
+
+            this.injectPlaylists(playlists.items);
+        }
+
+        /**
+         * @param playlists array
+         */
+        injectPlaylists(playlists) {
+            for (let playlist of playlists) {
+                const element = this.createPlaylistElement(playlist)
+                this.elements.listContainer.appendChild(element);
+                element.addEventListener('click', e => {this.handlePlaylistClick(e)});
+                element.querySelector('.download-btn').addEventListener('click', e => {
+                    e.stopPropagation();
+                    const ct = e.currentTarget;
+                    const playlistId = ct.getAttribute('data-playlist-id');
+                    const playlistName = ct.getAttribute('data-playlist-name');
+                    this.#downloadPlaylistTracks(playlistId, playlistName);
+                });
+            }
+        }
+
+        /**
+         * @param playlist object
+         * @returns {HTMLDivElement}
+         */
+        createPlaylistElement(playlist) {
+            const element = document.createElement('div');
+            element.classList.add('playlist-item');
+            element.setAttribute('data-playlist-id', playlist.id);
+            element.innerHTML = `
+            <span>${playlist.name}</span>
+            <div>
+            <span class="playlist-loading-dots"></span>
+            <a href="#" class="download-btn" data-playlist-id="${playlist.id}" data-playlist-name="${playlist.name}">Download</a>
+            </div>
+            `;
+            return element;
+        }
+
+        handlePlaylistClick(e) {
+            const
+                ct = e.currentTarget,
+                playlistId = ct.getAttribute('data-playlist-id');
+
+            if (! playlistId) {
+                return;
+            }
+
+            this.playlistExporter.toggleSelectedPlaylist(playlistId);
+        }
+
+        /**
+         * @param playlistId string
+         */
+        indicateSelectedPlaylist(playlistId) {
+            const playlistItem = this.getPlaylistItemById(playlistId);
+
+            playlistItem.classList.add('chosen-for-export');
+
+            new LoadingDots(playlistItem.querySelector('.playlist-loading-dots'), 100);
+        }
+
+        /**
+         * @param playlistId string
+         */
+        getPlaylistItemById(playlistId) {
+            return this.elements.listContainer.querySelector(`.playlist-item[data-playlist-id="${playlistId}"]`)
+        }
+
+        /**
+         * @param playlistId string
+         */
+        indicatePrepared(playlistId) {
+            this.getPlaylistItemById(playlistId).classList.add('ready-for-download');
+        }
+
+        /**
+         * @param playlistId int
+         * @param playlistName string
+         */
+        #downloadPlaylistTracks(playlistId, playlistName) {
+            const playlist = this.playlistExporter.preparedExports[playlistId];
+
+            const blob = this.#createPlaylistWithTracksBlob(playlistName, playlist.items);
+            const a = document.createElement('a');
+            a.download = playlistName;
+            a.href = URL.createObjectURL(blob);
+            a.click();
+            URL.revokeObjectURL(a.href);
+        }
+
+        /**
+         * @param playlistName string
+         * @param tracks array
+         * @returns {Blob}
+         */
+        #createPlaylistWithTracksBlob(playlistName, tracks) {
+            const commaHex = '%2c';
+            const formattedTracks = tracks.map(track => {
+                return [
+                    `${track.Track.name.replaceAll(',', commaHex)}`,
+                    `${track.Track.Artists[0].name.replaceAll(',', commaHex)}`,
+                    `${track.Track.Album.name.replaceAll(',', commaHex)}`,
+                    `${track.added_at}`
+                ].join(',');
+            }).join('\n');
+            return new Blob(['Track, Artist, Album, Added\n', formattedTracks], {
+                type: 'text/csv',
+            });
+        }
+    }
+
+    class PlaylistExporter {
+        /**
+         * @type Playlists
+         */
+        playlistsManager = undefined;
+
+        selected = {};
+
+        preparedExports = {};
+
+        /**
+         * @param playlistsManager Playlists
+         */
+        setPlaylistManager(playlistsManager) {
+            this.playlistsManager = playlistsManager;
+        }
+
+        /**
+         * @param playlistId string
+         */
+        toggleSelectedPlaylist(playlistId) {
+            // so that we don't re-pull all the data
+            if (this.selected.hasOwnProperty(playlistId)) {
+                return;
+            }
+
+            this.selected[playlistId] = undefined;
+            this.playlistsManager.indicateSelectedPlaylist(playlistId);
+            this.#loadTracksForEachPlaylist([playlistId]);
+        }
+
+        /**
+         * @param playlistIds []string
+         */
+        async #loadTracksForEachPlaylist(playlistIds) {
+            for (let id of playlistIds) {
+                const tracks = await Api.getTracksInPlaylist(id);
+
+                this.preparedExports[id] = tracks;
+
+                this.playlistsManager.indicatePrepared(id);
+            }
+        }
+    }
+
+    class PageManager {
+        /**
+         * @type UserProfile
+         */
+        userProfile = undefined;
+        /**
+         * @type Playlists
+         */
+        playlists = undefined;
+        /**
+         * @type PlaylistExporter
+         */
+        playlistExporter = undefined;
+
+        constructor() {
+            this.playlistExporter = new PlaylistExporter();
+            this.userProfile = new UserProfile();
+            this.userProfile.init();
+            this.playlists = new Playlists();
+            this.playlists.init();
+            this.playlists.setPlaylistExporter(this.playlistExporter);
+            this.playlistExporter.setPlaylistManager(this.playlists);
+        }
+    }
+
+    new PageManager();
+</script>
+
+{{ end }}

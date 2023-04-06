@@ -1,5 +1,8 @@
-node_modules
-account_access.json
 .env
+
+#IDE & OS
+.idea
 .DS_Store
-archives
+
+# Binaries
+tailwindcss
