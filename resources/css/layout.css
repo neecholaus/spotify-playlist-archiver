@@ -87,10 +87,24 @@ div#playlists .playlist-item {
 
 div#playlists .playlist-item.chosen-for-export {
     @apply
-        border-green-200
-        bg-green-100
-        text-green-600
+        border-blue-200
+        bg-blue-100
+        text-blue-600
 }
-div#playlists .playlist-item:not(.ready-for-download) .download-btn{
+
+div#playlists .playlist-item.chosen-for-export:not(.ready-for-download) .playlist-loading-dots {
+    display: inline-block;
+}
+
+div#playlists .playlist-item .playlist-loading-dots {
     display: none;
+    min-width: 1em;
+    text-align: left;
+}
+
+div#playlists .playlist-item:not(.ready-for-download) .download-btn {
+    display: none;
+}
+div#playlists .playlist-item .download-btn {
+    font-size: .9em;
 }

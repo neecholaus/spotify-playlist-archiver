@@ -1,7 +1,7 @@
 {{ define "user" }}
     <span class="inline-block">
         <span id="user-profile" class="flex py-1 pr-6 pl-3 items-center bg-blue-200 text-blue-900">
-            <img id="user-image" alt="User Image" style="display:none;" />
+            <img id="user-image" alt="User Image" style="opacity:0;" />
             <span id="display-name">
                 Loading Profile
                 <span class="user-profile-loading-dots"></span>
@@ -95,11 +95,11 @@
             this.elements.displayName.innerHTML = userProfile.display_name;
 
             if (!userProfile.images.length) {
-                this.elements.image.style.display = 'none';
+                this.elements.image.style.opacity = '1';
                 return
             }
             this.elements.image.src = userProfile.images[0].url;
-            this.elements.image.style.display = 'inline-block';
+            this.elements.image.style.opacity = '1';
         }
     }
 
@@ -157,7 +157,10 @@
             element.setAttribute('data-playlist-id', playlist.id);
             element.innerHTML = `
             <span>${playlist.name}</span>
+            <div>
+            <span class="playlist-loading-dots"></span>
             <a href="#" class="download-btn" data-playlist-id="${playlist.id}" data-playlist-name="${playlist.name}">Download</a>
+            </div>
             `;
             return element;
         }
@@ -178,14 +181,11 @@
          * @param playlistId string
          */
         indicateSelectedPlaylist(playlistId) {
-            this.getPlaylistItemById(playlistId).classList.add('chosen-for-export');
-        }
+            const playlistItem = this.getPlaylistItemById(playlistId);
 
-        /**
-         * @param playlistId string
-         */
-        indicateNotSelectedPlaylist(playlistId) {
-            this.getPlaylistItemById(playlistId).classList.remove('chosen-for-export');
+            playlistItem.classList.add('chosen-for-export');
+
+            new LoadingDots(playlistItem.querySelector('.playlist-loading-dots'), 100);
         }
 
         /**
@@ -259,9 +259,8 @@
          * @param playlistId string
          */
         toggleSelectedPlaylist(playlistId) {
+            // so that we don't re-pull all the data
             if (this.selected.hasOwnProperty(playlistId)) {
-                delete this.selected[playlistId];
-                this.playlistsManager.indicateNotSelectedPlaylist(playlistId);
                 return;
             }
 
