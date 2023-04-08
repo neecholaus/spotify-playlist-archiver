@@ -1,18 +1,20 @@
 # Spotify Playlist Archiver
 ## What is this?
-This is a tool allowing me to make a csv for any of my Spotify playlists, so that I may rest assured that all of those obscure artists and songs I stumble upon will not be lost should Spotify mishandle them.
+This is a tool allowing me to make a csv of songs in any of my Spotify playlists.
 
 ![Screenshot of the web interface](examples/web-screenshot.png)
 
-## What is an archive?
+## What is in the csv?
 An archive is a csv with a list of all the songs in any single playlist. The filename is the playlist name.
 
 ![Screenshot of an archvie](examples/archive-screenshot.png)
 
-## What is inside?
-A go backend, which serves some vanilla html, js and css, and handles the fetching of data from Spotify's api.
+## Describe the tech
+There is a go backend, which serves some vanilla html, js and css, and handles the fetching of data from Spotify's api.
 
 ## How do I run this?
+> This is for *me*, to be used once I forget.
+
 First you'll need to bundle the web assets, both css and js. This process was not as streamlined or "production" ready as it could be. My choices were based more out of wanting to see what I could do with minimal tools than of wanting an enterprise grade setup.
 
 To bundle the stylesheets, you'll need tailwind. If you are on an arm Mac, I've provided a `make` recipe.
@@ -29,5 +31,3 @@ Now the app can be run with:
 ```shell
 go run .
 ```
-
-I don't expect *you* to go through all this, unless *you* are *me*. I'm documenting in case I forget.
