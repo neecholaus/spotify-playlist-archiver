@@ -15,7 +15,7 @@ There is a go backend, which serves some vanilla html, js and css, and handles t
 ## How do I run this?
 > This is for *me*, to be used once I forget.
 
-First you'll need to bundle the web assets, both css and js. This process was not as streamlined or "production" ready as it could be. My choices were based more out of wanting to see what I could do with minimal tools than of wanting an enterprise grade setup.
+First you'll need to bundle the web assets, both css and js. This process was not as streamlined or "production" ready as it could be. My choices were oriented around going freestyle.
 
 To bundle the stylesheets, you'll need tailwind. If you are on an arm Mac, I've provided a `make` recipe.
 
